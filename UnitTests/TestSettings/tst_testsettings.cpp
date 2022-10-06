@@ -1,36 +1,63 @@
-#include "unittest.h"
+#include <QtTest>
+#include "settings.h"
+// add necessary includes here
 
-
-const QString SettingsUnitTest::m_settingsName = "MySettings";
-
-SettingsUnitTest::SettingsUnitTest()
+class TestSettings : public QObject
 {
-    m_settings = nullptr;
+        Q_OBJECT
+
+    public:
+        TestSettings();
+        ~TestSettings();
+
+    private slots:
+        void initTestCase();
+        void cleanupTestCase();
+
+        void createSettings();
+        void editSettings();
+        void removeSettings();
+        void clearSettings();
+
+    public slots:
+        void onSettingValueChanged(const Settings::Setting &setting);
+        void onSettingNameChanged(const Settings::Setting &setting);
+
+    private:
+        Settings::Settings *m_settings;
+
+
+
+        static const QString m_settingsName;
+};
+
+const QString TestSettings::m_settingsName = "MySettings";
+
+TestSettings::TestSettings()
+{
+
 }
 
-void SettingsUnitTest::initMain()
+TestSettings::~TestSettings()
 {
-    qDebug("initMain");
-
 
 }
 
-
-void SettingsUnitTest::initTestCase()
+void TestSettings::initTestCase()
 {
     qDebug("initTestCase");
-    //QTest::qExec(obj, argc, argv);
-    /*SettingTest settingTest;
-    settingTest.initTestCase();
-    settingTest.createSetting();*/
+   // TestSettings TestSettings;
+
+   // QTest::qExec(&TestSettings);
+
 
     m_settings = new Settings::Settings(m_settingsName);
-    connect(m_settings,&Settings::Settings::settingNameChanged,this,&SettingsUnitTest::onSettingNameChanged);
-    connect(m_settings,&Settings::Settings::settingValueChanged,this,&SettingsUnitTest::onSettingValueChanged);
+    connect(m_settings,&Settings::Settings::settingNameChanged,this,&TestSettings::onSettingNameChanged);
+    connect(m_settings,&Settings::Settings::settingValueChanged,this,&TestSettings::onSettingValueChanged);
     QCOMPARE(m_settings->getName(),m_settingsName);
     QVERIFY(m_settings->getSize() == 0);
 }
-void SettingsUnitTest::cleanupTestCase()
+void TestSettings::cleanupTestCase()
 {
     delete m_settings;
     m_settings = nullptr;
@@ -38,7 +65,7 @@ void SettingsUnitTest::cleanupTestCase()
 }
 
 
-void SettingsUnitTest::createSettings()
+void TestSettings::createSettings()
 {
     QSignalSpy settingsAddedSpy(m_settings, &Settings::Settings::settingAdded);
     m_settings->add("FirstSetting",123);
@@ -63,7 +90,7 @@ void SettingsUnitTest::createSettings()
     QCOMPARE((*m_settings)[-5].getValue().toInt(),0); // Must QWarning
 
 }
-void SettingsUnitTest::editSettings()
+void TestSettings::editSettings()
 {
     QSignalSpy settingsChangedSpy(m_settings, &Settings::Settings::settingValueChanged);
     (*m_settings)["FirstSetting"] = 321;
@@ -82,7 +109,7 @@ void SettingsUnitTest::editSettings()
     QCOMPARE((*m_settings)[2].getValue().toString(),"newText");
 
 }
-void SettingsUnitTest::removeSettings()
+void TestSettings::removeSettings()
 {
     QSignalSpy settingsRemovedSpy(m_settings, &Settings::Settings::settingRemoved);
     QVERIFY(m_settings->remove("SecondSetting"));
@@ -98,7 +125,7 @@ void SettingsUnitTest::removeSettings()
     QCOMPARE((*m_settings)[1].getValue().toString(),"newText");
 
 }
-void SettingsUnitTest::clearSettings()
+void TestSettings::clearSettings()
 {
     m_settings->clear();
 
@@ -111,11 +138,15 @@ void SettingsUnitTest::clearSettings()
 }
 
 
-void SettingsUnitTest::onSettingValueChanged(const Settings::Setting &setting)
+void TestSettings::onSettingValueChanged(const Settings::Setting &setting)
 {
     qDebug() << "onSettingValueChanged: "<<setting;
 }
-void SettingsUnitTest::onSettingNameChanged(const Settings::Setting &setting)
+void TestSettings::onSettingNameChanged(const Settings::Setting &setting)
 {
     qDebug() << "onSettingNameChanged: "<<setting;
 }
+
+QTEST_APPLESS_MAIN(TestSettings)
+
+#include "tst_testsettings.moc"
