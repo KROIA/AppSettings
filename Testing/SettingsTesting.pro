@@ -17,11 +17,14 @@ src = $$PWD/src/
 INCLUDEPATH += $$inc
 
 HEADERS += \
-    $$inc/unittest.h
+    $$inc/unittest.h \
+    inc/settingTest.h \
+    inc/subTest.h
 
 SOURCES += \
     $$src/main.cpp \
-    $$src/unittest.cpp
+    $$src/unittest.cpp \
+    src/settingTest.cpp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

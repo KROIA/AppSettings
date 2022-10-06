@@ -13,10 +13,11 @@ Settings::Settings(const QString &name)
 }
 Settings::Settings(const Settings &other)
 {
+    m_name = other.m_name;
     m_settings.reserve(other.m_settings.size());
     for(size_t i=0; i<other.m_settings.size(); ++i)
     {
-        Setting *newSetting = new Setting(*other.m_settings[i]);
+        Setting *newSetting = new Setting(*other.m_settings[i], this);
         connectSignals(newSetting);
         m_settings.push_back(newSetting);
     }
@@ -41,10 +42,11 @@ const QString &Settings::getName() const
 
 const Settings &Settings::operator=(const Settings &other)
 {
+    m_name = other.m_name;
     m_settings.reserve(other.m_settings.size());
     for(size_t i=0; i<other.m_settings.size(); ++i)
     {
-        Setting *newSetting = new Setting(*other.m_settings[i]);
+        Setting *newSetting = new Setting(*other.m_settings[i], this);
         connectSignals(newSetting);
         m_settings.push_back(newSetting);
     }
@@ -57,7 +59,7 @@ Setting &Settings::operator[](const QString &name)
     {
         static Setting invalidDummy;
         invalidDummy = Setting();
-        qWarning() << __FILE__ << "->" << __PRETTY_FUNCTION__ << "name: "
+        SETTINGS_WARNING_PRETTY<< "name: "
                    << name << " is not in the settings list: " << m_name << "";
         return invalidDummy;
     }
@@ -69,7 +71,7 @@ Setting &Settings::operator[](size_t index)
         return *m_settings[index];
     static Setting invalidDummy;
     invalidDummy = Setting();
-    qWarning() << __FILE__ << "->" << __PRETTY_FUNCTION__ << "index: "
+    SETTINGS_WARNING_PRETTY<< "index: "
                << index << " is out of range, list "<<m_name<< " has only: " << m_settings.size()<< " settings";
     return invalidDummy;
 }
@@ -77,42 +79,42 @@ bool Settings::add(const Setting &setting)
 {
     if(exists(setting.getName()))
     {
-        qWarning() << __FILE__ << "->" << __PRETTY_FUNCTION__ << "settings list: " << m_name
+        SETTINGS_WARNING_PRETTY<< "settings list: " << m_name
                    << " already contains such a setting: " << m_settings[getIndex(setting.getName())]->toString();
         return false;
     }
-    Setting *newSetting = new Setting(setting);
+    Setting *newSetting = new Setting(setting, this);
     connectSignals(newSetting);
     m_settings.push_back(newSetting);
-    emit settingAdded();
+    emit settingAdded(*newSetting);
     return true;
 }
 bool Settings::add(const QString &name, const QVariant value)
 {
     if(exists(name))
     {
-        qWarning() << __FILE__ << "->" << __PRETTY_FUNCTION__ << "settings list: " << m_name
+        SETTINGS_WARNING_PRETTY<< "settings list: " << m_name
                    << " already contains such a setting: " << m_settings[getIndex(name)]->toString();
         return false;
     }
-    Setting *newSetting = new Setting(name,value);
+    Setting *newSetting = new Setting(name,value, this);
     connectSignals(newSetting);
     m_settings.push_back(newSetting);
-    emit settingAdded();
+    emit settingAdded(*newSetting);
     return true;
 }
 bool Settings::add(const std::pair<QString,QVariant> &setting)
 {
     if(exists(setting.first))
     {
-        qWarning() << __FILE__ << "->" << __PRETTY_FUNCTION__ << "settings list: " << m_name
+        SETTINGS_WARNING_PRETTY<< "settings list: " << m_name
                    << " already contains such a setting: " << m_settings[getIndex(setting.first)]->toString();
         return false;
     }
-    Setting *newSetting = new Setting(setting);
+    Setting *newSetting = new Setting(setting, this);
     connectSignals(newSetting);
     m_settings.push_back(newSetting);
-    emit settingAdded();
+    emit settingAdded(*newSetting);
     return true;
 }
 bool Settings::remove(const Setting &setting)
@@ -176,7 +178,7 @@ size_t Settings::getIndex(const QString &name) const
             if(m_settings[i]->getName() == name)
                 return i;
     }
-    return 0;
+    return npos;
 }
 size_t Settings::getSize() const
 {
@@ -184,15 +186,16 @@ size_t Settings::getSize() const
 }
 QString Settings::toString(int tabCount) const
 {
-    QString tabs(tabCount+2,' ');
+    QString tabs(tabCount*4,' ');
+    const static QString singleTab = "    ";
     QString str = tabs + "settings: " + m_name + "\n" + tabs + "{";
 
     for(auto const &param : m_settings)
     {
         if(param)
-            str += tabs + param->toString() + "\n";
+            str += tabs + singleTab + param->toString() + "\n";
         else
-            str += tabs + "nullptr\n";
+            str += tabs + singleTab + "nullptr\n";
     }
     str+=tabs+"}";
     return str;
@@ -202,23 +205,22 @@ QDebug operator<<(QDebug debug, const Settings &settings)
     debug.nospace() << settings.toString();
     return debug;
 }
-
-void Settings::onSettingValueChanged(const QVariant &value)
+void Settings::onSettingValueChanged(const QVariant&)
 {
     Setting* setting = qobject_cast<Setting*>(QObject::sender());
     if(!setting)
     {
-        qWarning() << __FILE__ << "->" << __PRETTY_FUNCTION__ << "receiving signal but sender is nullptr?!";
+        SETTINGS_WARNING_PRETTY<< "receiving signal but sender is nullptr?!";
         return;
     }
     emit settingValueChanged(*setting);
 }
-void Settings::onSettingNameChanged(const QString &parameterName)
+void Settings::onSettingNameChanged(const QString &)
 {
     Setting* setting = qobject_cast<Setting*>(QObject::sender());
     if(!setting)
     {
-        qWarning() << __FILE__ << "->" << __PRETTY_FUNCTION__ << "receiving signal but sender is nullptr?!";
+        SETTINGS_WARNING_PRETTY<< "receiving signal but sender is nullptr?!";
         return;
     }
     emit settingNameChanged(*setting);

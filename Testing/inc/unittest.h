@@ -3,7 +3,7 @@
 #include <QTest>
 #include <QSignalSpy>
 #include "settings.h"
-
+#include "settingTest.h"
 
 
 class SettingsUnitTest : public QObject
@@ -27,6 +27,8 @@ class SettingsUnitTest : public QObject
         void onSettingNameChanged(const Settings::Setting &setting);
     private:
         Settings::Settings *m_settings;
+
+
 
         static const QString m_settingsName;
 };

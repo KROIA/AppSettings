@@ -9,6 +9,7 @@ INCLUDEPATH += \
 
 HEADERS += \
     $$PWD/inc/init.h \
+    $$PWD/inc/settingsDeclaration.h \
     $$inc/setting.h \
     $$inc/settings.h \
     $$inc/serializer/serializer.h \

@@ -19,6 +19,10 @@ void SettingsUnitTest::initMain()
 void SettingsUnitTest::initTestCase()
 {
     qDebug("initTestCase");
+    //QTest::qExec(obj, argc, argv);
+    /*SettingTest settingTest;
+    settingTest.initTestCase();
+    settingTest.createSetting();*/
 
     m_settings = new Settings::Settings(m_settingsName);
     connect(m_settings,&Settings::Settings::settingNameChanged,this,&SettingsUnitTest::onSettingNameChanged);
