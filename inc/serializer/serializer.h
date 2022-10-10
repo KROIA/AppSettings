@@ -1,5 +1,5 @@
 #pragma once
-#include "settings.h"
+#include "settingGroup.h"
 
 namespace Settings
 {

@@ -7,7 +7,7 @@
  * \brief This class is used to register the QMetaType for signals but currently it also works without
  */
 
-#include "settings.h"
+#include "settingGroup.h"
 #include <QDebug>
 
 namespace Settings
@@ -18,7 +18,7 @@ namespace Settings
         public:
             StaticInit(){
                qRegisterMetaType<Setting>("Setting");
-               qRegisterMetaType<Settings>("Settings");
+               qRegisterMetaType<SettingGroup>("SettingGroup");
             }
         private:
     };

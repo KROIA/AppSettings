@@ -1,20 +1,20 @@
 CONFIG += c++11
 
-inc = $$PWD/inc/
-src = $$PWD/src/
+inc = $$PWD/inc
+src = $$PWD/src
 
 INCLUDEPATH += \
     $$inc \
     $$inc/serializer
 
 HEADERS += \
-    $$PWD/inc/init.h \
-    $$PWD/inc/settingsDeclaration.h \
+    $$inc/init.h \
+    $$inc/settingsDeclaration.h \
     $$inc/setting.h \
-    $$inc/settings.h \
+    $$inc/settingGroup.h \
     $$inc/serializer/serializer.h \
 
 SOURCES += \
-    $$PWD/src/init.cpp \
+    $$src/init.cpp \
     $$src/setting.cpp \
-    $$src/settings.cpp \
+    $$src/settingGroup.cpp \

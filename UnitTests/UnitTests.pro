@@ -4,4 +4,4 @@ TEMPLATE = subdirs
 
 SUBDIRS += \
     TestSetting \
-    TestSettings
+    TestSettingGroup

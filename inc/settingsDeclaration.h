@@ -4,5 +4,5 @@
 namespace Settings
 {
     class Setting;
-    class Settings;
+    class SettingGroup;
 }

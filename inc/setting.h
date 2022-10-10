@@ -24,40 +24,40 @@ namespace Settings
 
             /**
              * \brief Constructor
-             * \param parent, The parent Settings object, this setting is
+             * \param parent, The parent SettingGroup object, this setting is
              *                contained in
              */
-            Setting(Settings *parent = nullptr);
+            Setting(SettingGroup *parent = nullptr);
 
             /**
              * \brief Copy constructor
              * \param other, The other object from which will be copied
-             * \param parent, The parent Settings object, this setting is
+             * \param parent, The parent SettingGroup object, this setting is
              *                contained in
              */
-            Setting(const Setting &other, Settings *parent = nullptr);
+            Setting(const Setting &other, SettingGroup *parent = nullptr);
 
             /**
              * \brief Constructor
              * \param name,  The name of the setting
              * \param value, The value of the parameter, can by any QVariant compatible type
-             * \param parent, The parent Settings object, this setting is
+             * \param parent, The parent SettingGroup object, this setting is
              *                contained in
              */
-            Setting(const QString &name, const QVariant value, Settings *parent = nullptr);
+            Setting(const QString &name, const QVariant value, SettingGroup *parent = nullptr);
 
             /**
              * \brief Constructor
              * \param setting,  a pair of name and value
-             * \param parent, The parent Settings object, this setting is
+             * \param parent, The parent SettingGroup object, this setting is
              *                contained in
              */
-            Setting(const std::pair<QString,QVariant> &setting, Settings *parent = nullptr);
+            Setting(const std::pair<QString,QVariant> &setting, SettingGroup *parent = nullptr);
 
             ~Setting();
 
-            void setParent(Settings *parent);
-            Settings* getParent() const;
+            void setParent(SettingGroup *parent);
+            SettingGroup* getParent() const;
 
             /**
              * \brief assignement operator
@@ -68,7 +68,7 @@ namespace Settings
 
             /**
              * \brief assignement operator
-             * \param value,  Will assign <value> to this settings value
+             * \param value,  Will assign <value> to this SettingGroup value
              */
             const Setting &operator=(const QVariant &value);
 
@@ -142,7 +142,7 @@ namespace Settings
 
         private:
             std::pair<QString,QVariant> m_parameter;
-            Settings *m_parent;
+            SettingGroup *m_parent;
     };
 
 }

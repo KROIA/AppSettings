@@ -1,26 +1,26 @@
 #include "setting.h"
-#include "settings.h"
+#include "settingGroup.h"
 
 namespace Settings
 {
-Setting::Setting(Settings *parent)
+Setting::Setting(SettingGroup *parent)
     : QObject()
 {
     m_parent = parent;
 }
-Setting::Setting(const Setting &other, Settings *parent)
+Setting::Setting(const Setting &other, SettingGroup *parent)
     : QObject()
 {
     m_parent = parent;
     m_parameter = other.m_parameter;
 }
-Setting::Setting(const QString &name, const QVariant value, Settings *parent)
+Setting::Setting(const QString &name, const QVariant value, SettingGroup *parent)
 {
     m_parent = parent;
     m_parameter.first = name;
     m_parameter.second = value;
 }
-Setting::Setting(const std::pair<QString,QVariant> &setting, Settings *parent)
+Setting::Setting(const std::pair<QString,QVariant> &setting, SettingGroup *parent)
 {
     m_parent = parent;
     m_parameter = setting;
@@ -30,11 +30,11 @@ Setting::~Setting()
 
 }
 
-void Setting::setParent(Settings *parent)
+void Setting::setParent(SettingGroup *parent)
 {
     m_parent = parent;
 }
-Settings* Setting::getParent() const
+SettingGroup* Setting::getParent() const
 {
     return m_parent;
 }

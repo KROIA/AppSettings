@@ -7,4 +7,4 @@ CONFIG -= app_bundle
 TEMPLATE = app
 include(../../settings.pri)
 
-SOURCES +=  tst_testsettings.cpp
+SOURCES +=  tst_testsettingGroup.cpp

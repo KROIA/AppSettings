@@ -5,47 +5,46 @@
  * \date    04.10.2022
  *
  * \brief This class is used to store multiple
- *        unique(by name) settings
+ *        unique(by name) SettingGroup
  *
  */
 
 #include <QObject>
 #include <vector>
 #include "setting.h"
-//#include "settingsDeclaration.h"
+//#include "SettingGroupDeclaration.h"
 
 namespace Settings
 {
-    using std::vector;
-    class Settings  :   public QObject
+    class SettingGroup  :   public QObject
     {
             Q_OBJECT
 
         public:
-            Settings();
+            SettingGroup();
 
             /**
              * \brief Constructor
-             * \param name, name of this settings group
+             * \param name, name of this SettingGroup group
              */
-            Settings(const QString &name);
+            SettingGroup(const QString &name);
 
             /**
              * \brief Copy constructor
              * \param other, The other object from which will be copied
              */
-            Settings(const Settings &other);
-            ~Settings();
+            SettingGroup(const SettingGroup &other);
+            ~SettingGroup();
 
             /**
              * \brief setName
-             * \param name, name of this settings group
+             * \param name, name of this SettingGroup group
              */
             void setName(const QString &name);
 
             /**
              * \brief getName
-             * \return returns the name of this settings group
+             * \return returns the name of this SettingGroup group
              */
             const QString &getName() const;
 
@@ -54,7 +53,7 @@ namespace Settings
              * \param other, The other object from which will be copied
              * \return returns a reference to this
              */
-            const Settings &operator=(const Settings &other);
+            const SettingGroup &operator=(const SettingGroup &other);
 
             /**
              * \brief operator[]
@@ -120,7 +119,7 @@ namespace Settings
             bool remove(size_t index);
 
             /**
-             * \brief removes all settings from the list
+             * \brief removes all SettingGroup from the list
              */
             void clear();
 
@@ -136,13 +135,13 @@ namespace Settings
              * \brief getIndex
              * \param name, the name of the setting which will be searched for
              * \return returns the index of setting with the name list
-             *         returns Settings::npos, if no such setting exists in the list
+             *         returns SettingGroup::npos, if no such setting exists in the list
              */
             size_t getIndex(const QString &name) const;
 
             /**
              * \brief getSize
-             * \return returns the amount of settings in the list
+             * \return returns the amount of SettingGroup in the list
              */
             size_t getSize() const;
 
@@ -151,7 +150,7 @@ namespace Settings
              * \param tabCount, amount of tabs which will be at the left side of every
              *                  new line.
              *                  One tab = 4 spaced = "    "
-             * \return returns a string with all informations of this Settings
+             * \return returns a string with all informations of this SettingGroup
              */
             QString toString(int tabCount = 0) const;
 
@@ -160,10 +159,10 @@ namespace Settings
              *        Prints the setting to the QT-debug console in the same form as this->toString()
              * \see toString()
              *        Usage:
-             *        Settings mySettings();
-             *        qDebug() << mySettings;
+             *        SettingGroup mySettingGroup();
+             *        qDebug() << mySettingGroup;
              */
-            friend QDebug operator<<(QDebug debug, const Settings &settings);
+            friend QDebug operator<<(QDebug debug, const SettingGroup &SettingGroup);
 
 
             static const size_t npos = -1; //!< The no position index of an array
@@ -193,10 +192,10 @@ namespace Settings
             void settingRemoved();
 
             /**
-             * \brief settingsCleared
-             * \details Will be emitted if the settings list was cleared
+             * \brief SettingGroupCleared
+             * \details Will be emitted if the SettingGroup list was cleared
              */
-            void settingsCleared();
+            void SettingGroupCleared();
         public slots:
 
         private slots:
@@ -211,8 +210,8 @@ namespace Settings
             void disconnectSignals(Setting *setting);
 
             QString m_name;
-            vector<Setting*> m_settings;
+            std::vector<Setting*> m_SettingGroup;
 
     };
 }
-Q_DECLARE_METATYPE(Settings::Settings);
+Q_DECLARE_METATYPE(Settings::SettingGroup);

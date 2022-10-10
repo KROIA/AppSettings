@@ -1,133 +1,133 @@
-#include "settings.h"
+#include "settingGroup.h"
 
 namespace Settings
 {
-
-Settings::Settings()
+using std::vector;
+SettingGroup::SettingGroup()
 {
 
 }
-Settings::Settings(const QString &name)
+SettingGroup::SettingGroup(const QString &name)
 {
     setName(name);
 }
-Settings::Settings(const Settings &other)
+SettingGroup::SettingGroup(const SettingGroup &other)
 {
     m_name = other.m_name;
-    m_settings.reserve(other.m_settings.size());
-    for(size_t i=0; i<other.m_settings.size(); ++i)
+    m_SettingGroup.reserve(other.m_SettingGroup.size());
+    for(size_t i=0; i<other.m_SettingGroup.size(); ++i)
     {
-        Setting *newSetting = new Setting(*other.m_settings[i], this);
+        Setting *newSetting = new Setting(*other.m_SettingGroup[i], this);
         connectSignals(newSetting);
-        m_settings.push_back(newSetting);
+        m_SettingGroup.push_back(newSetting);
     }
 }
-Settings::~Settings()
+SettingGroup::~SettingGroup()
 {
-    for(size_t i=0; i<m_settings.size(); ++i)
+    for(size_t i=0; i<m_SettingGroup.size(); ++i)
     {
-        disconnectSignals(m_settings[i]);
-        delete m_settings[i];
+        disconnectSignals(m_SettingGroup[i]);
+        delete m_SettingGroup[i];
     }
-    m_settings.clear();
+    m_SettingGroup.clear();
 }
-void Settings::setName(const QString &name)
+void SettingGroup::setName(const QString &name)
 {
     m_name = name;
 }
-const QString &Settings::getName() const
+const QString &SettingGroup::getName() const
 {
     return m_name;
 }
 
-const Settings &Settings::operator=(const Settings &other)
+const SettingGroup &SettingGroup::operator=(const SettingGroup &other)
 {
     m_name = other.m_name;
-    m_settings.reserve(other.m_settings.size());
-    for(size_t i=0; i<other.m_settings.size(); ++i)
+    m_SettingGroup.reserve(other.m_SettingGroup.size());
+    for(size_t i=0; i<other.m_SettingGroup.size(); ++i)
     {
-        Setting *newSetting = new Setting(*other.m_settings[i], this);
+        Setting *newSetting = new Setting(*other.m_SettingGroup[i], this);
         connectSignals(newSetting);
-        m_settings.push_back(newSetting);
+        m_SettingGroup.push_back(newSetting);
     }
     return *this;
 }
 
-Setting &Settings::operator[](const QString &name)
+Setting &SettingGroup::operator[](const QString &name)
 {
     if(!exists(name))
     {
         static Setting invalidDummy;
         invalidDummy = Setting();
         SETTINGS_WARNING_PRETTY<< "name: "
-                   << name << " is not in the settings list: " << m_name << "";
+                   << name << " is not in the SettingGroup list: " << m_name << "";
         return invalidDummy;
     }
-    return *m_settings[getIndex(name)];
+    return *m_SettingGroup[getIndex(name)];
 }
-Setting &Settings::operator[](size_t index)
+Setting &SettingGroup::operator[](size_t index)
 {
-    if(index < m_settings.size())
-        return *m_settings[index];
+    if(index < m_SettingGroup.size())
+        return *m_SettingGroup[index];
     static Setting invalidDummy;
     invalidDummy = Setting();
     SETTINGS_WARNING_PRETTY<< "index: "
-               << index << " is out of range, list "<<m_name<< " has only: " << m_settings.size()<< " settings";
+               << index << " is out of range, list "<<m_name<< " has only: " << m_SettingGroup.size()<< " SettingGroup";
     return invalidDummy;
 }
-bool Settings::add(const Setting &setting)
+bool SettingGroup::add(const Setting &setting)
 {
     if(exists(setting.getName()))
     {
-        SETTINGS_WARNING_PRETTY<< "settings list: " << m_name
-                   << " already contains such a setting: " << m_settings[getIndex(setting.getName())]->toString();
+        SETTINGS_WARNING_PRETTY<< "SettingGroup list: " << m_name
+                   << " already contains such a setting: " << m_SettingGroup[getIndex(setting.getName())]->toString();
         return false;
     }
     Setting *newSetting = new Setting(setting, this);
     connectSignals(newSetting);
-    m_settings.push_back(newSetting);
+    m_SettingGroup.push_back(newSetting);
     emit settingAdded(*newSetting);
     return true;
 }
-bool Settings::add(const QString &name, const QVariant value)
+bool SettingGroup::add(const QString &name, const QVariant value)
 {
     if(exists(name))
     {
-        SETTINGS_WARNING_PRETTY<< "settings list: " << m_name
-                   << " already contains such a setting: " << m_settings[getIndex(name)]->toString();
+        SETTINGS_WARNING_PRETTY<< "SettingGroup list: " << m_name
+                   << " already contains such a setting: " << m_SettingGroup[getIndex(name)]->toString();
         return false;
     }
     Setting *newSetting = new Setting(name,value, this);
     connectSignals(newSetting);
-    m_settings.push_back(newSetting);
+    m_SettingGroup.push_back(newSetting);
     emit settingAdded(*newSetting);
     return true;
 }
-bool Settings::add(const std::pair<QString,QVariant> &setting)
+bool SettingGroup::add(const std::pair<QString,QVariant> &setting)
 {
     if(exists(setting.first))
     {
-        SETTINGS_WARNING_PRETTY<< "settings list: " << m_name
-                   << " already contains such a setting: " << m_settings[getIndex(setting.first)]->toString();
+        SETTINGS_WARNING_PRETTY<< "SettingGroup list: " << m_name
+                   << " already contains such a setting: " << m_SettingGroup[getIndex(setting.first)]->toString();
         return false;
     }
     Setting *newSetting = new Setting(setting, this);
     connectSignals(newSetting);
-    m_settings.push_back(newSetting);
+    m_SettingGroup.push_back(newSetting);
     emit settingAdded(*newSetting);
     return true;
 }
-bool Settings::remove(const Setting &setting)
+bool SettingGroup::remove(const Setting &setting)
 {
     return remove(setting.getName());
 }
-bool Settings::remove(const QString &name)
+bool SettingGroup::remove(const QString &name)
 {
     if(exists(name))
     {
         size_t index = getIndex(name);
-        Setting *setting = m_settings[index];
-        m_settings.erase(m_settings.begin() + index);
+        Setting *setting = m_SettingGroup[index];
+        m_SettingGroup.erase(m_SettingGroup.begin() + index);
         disconnectSignals(setting);
         delete setting;
         emit settingRemoved();
@@ -135,12 +135,12 @@ bool Settings::remove(const QString &name)
     }
     return false;
 }
-bool Settings::remove(size_t index)
+bool SettingGroup::remove(size_t index)
 {
-    if(m_settings.size() >= index)
+    if(m_SettingGroup.size() >= index)
     {
-        Setting *setting = m_settings[index];
-        m_settings.erase(m_settings.begin() + index);
+        Setting *setting = m_SettingGroup[index];
+        m_SettingGroup.erase(m_SettingGroup.begin() + index);
         disconnectSignals(setting);
         delete setting;
         emit settingRemoved();
@@ -148,49 +148,49 @@ bool Settings::remove(size_t index)
     }
     return false;
 }
-void Settings::clear()
+void SettingGroup::clear()
 {
-    for(size_t i=0; i<m_settings.size(); ++i)
+    for(size_t i=0; i<m_SettingGroup.size(); ++i)
     {
-        disconnectSignals(m_settings[i]);
-        delete m_settings[i];
+        disconnectSignals(m_SettingGroup[i]);
+        delete m_SettingGroup[i];
     }
-    m_settings.clear();
-    emit settingsCleared();
+    m_SettingGroup.clear();
+    emit SettingGroupCleared();
 }
 
 
-bool Settings::exists(const QString &name) const
+bool SettingGroup::exists(const QString &name) const
 {
-    for(size_t i=0; i<m_settings.size(); ++i)
+    for(size_t i=0; i<m_SettingGroup.size(); ++i)
     {
-        if(m_settings[i])
-            if(m_settings[i]->getName() == name)
+        if(m_SettingGroup[i])
+            if(m_SettingGroup[i]->getName() == name)
                 return true;
     }
     return false;
 }
-size_t Settings::getIndex(const QString &name) const
+size_t SettingGroup::getIndex(const QString &name) const
 {
-    for(size_t i=0; i<m_settings.size(); ++i)
+    for(size_t i=0; i<m_SettingGroup.size(); ++i)
     {
-        if(m_settings[i])
-            if(m_settings[i]->getName() == name)
+        if(m_SettingGroup[i])
+            if(m_SettingGroup[i]->getName() == name)
                 return i;
     }
     return npos;
 }
-size_t Settings::getSize() const
+size_t SettingGroup::getSize() const
 {
-    return m_settings.size();
+    return m_SettingGroup.size();
 }
-QString Settings::toString(int tabCount) const
+QString SettingGroup::toString(int tabCount) const
 {
     QString tabs(tabCount*4,' ');
     const static QString singleTab = "    ";
-    QString str = tabs + "settings: " + m_name + "\n" + tabs + "{";
+    QString str = tabs + "SettingGroup: " + m_name + "\n" + tabs + "{";
 
-    for(auto const &param : m_settings)
+    for(auto const &param : m_SettingGroup)
     {
         if(param)
             str += tabs + singleTab + param->toString() + "\n";
@@ -200,12 +200,12 @@ QString Settings::toString(int tabCount) const
     str+=tabs+"}";
     return str;
 }
-QDebug operator<<(QDebug debug, const Settings &settings)
+QDebug operator<<(QDebug debug, const SettingGroup &SettingGroup)
 {
-    debug.nospace() << settings.toString();
+    debug.nospace() << SettingGroup.toString();
     return debug;
 }
-void Settings::onSettingValueChanged(const QVariant&)
+void SettingGroup::onSettingValueChanged(const QVariant&)
 {
     Setting* setting = qobject_cast<Setting*>(QObject::sender());
     if(!setting)
@@ -215,7 +215,7 @@ void Settings::onSettingValueChanged(const QVariant&)
     }
     emit settingValueChanged(*setting);
 }
-void Settings::onSettingNameChanged(const QString &)
+void SettingGroup::onSettingNameChanged(const QString &)
 {
     Setting* setting = qobject_cast<Setting*>(QObject::sender());
     if(!setting)
@@ -225,31 +225,31 @@ void Settings::onSettingNameChanged(const QString &)
     }
     emit settingNameChanged(*setting);
 }
-void Settings::onSettingDestroyed(QObject *obj)
+void SettingGroup::onSettingDestroyed(QObject *obj)
 {
     Setting* setting = qobject_cast<Setting*>(obj);
-    for(size_t i=0; i<m_settings.size(); ++i)
+    for(size_t i=0; i<m_SettingGroup.size(); ++i)
     {
-        if(m_settings[i] == setting)
+        if(m_SettingGroup[i] == setting)
         {
-            m_settings.erase(m_settings.begin() + i);
+            m_SettingGroup.erase(m_SettingGroup.begin() + i);
             emit settingRemoved();
             return;
         }
     }
 }
-void Settings::connectSignals(Setting *setting)
+void SettingGroup::connectSignals(Setting *setting)
 {
     if(!setting) return;
-    connect(setting,  &Setting::nameChanged,  this,  &Settings::onSettingNameChanged);
-    connect(setting,  &Setting::valueChanged, this,  &Settings::onSettingValueChanged);
-    connect(setting,  &Setting::destroyed,    this,  &Settings::onSettingDestroyed);
+    connect(setting,  &Setting::nameChanged,  this,  &SettingGroup::onSettingNameChanged);
+    connect(setting,  &Setting::valueChanged, this,  &SettingGroup::onSettingValueChanged);
+    connect(setting,  &Setting::destroyed,    this,  &SettingGroup::onSettingDestroyed);
 }
-void Settings::disconnectSignals(Setting *setting)
+void SettingGroup::disconnectSignals(Setting *setting)
 {
     if(!setting) return;
-    disconnect(setting,  &Setting::nameChanged,  this,  &Settings::onSettingNameChanged);
-    disconnect(setting,  &Setting::valueChanged, this,  &Settings::onSettingValueChanged);
-    disconnect(setting,  &Setting::destroyed,    this,  &Settings::onSettingDestroyed);
+    disconnect(setting,  &Setting::nameChanged,  this,  &SettingGroup::onSettingNameChanged);
+    disconnect(setting,  &Setting::valueChanged, this,  &SettingGroup::onSettingValueChanged);
+    disconnect(setting,  &Setting::destroyed,    this,  &SettingGroup::onSettingDestroyed);
 }
 }
