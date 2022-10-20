@@ -12,11 +12,12 @@
 #include <QVariant>
 #include <utility>
 #include "settingsDeclaration.h"
+#include "ISerializable.h"
 
 
 namespace Settings
 {
-    class Setting  :   public QObject
+    class Setting  :   public QObject, public ISerializable
     {
             Q_OBJECT
 
@@ -107,6 +108,9 @@ namespace Settings
              *        qDebug() << mySetting;
              */
             friend QDebug operator<<(QDebug debug, const Setting &setting);
+
+            QJsonObject save() const override;              //!<\see ISerializable::save()
+            bool read(const QJsonObject &reader) override;  //!<\see ISerializable::read()
 
         signals:
 

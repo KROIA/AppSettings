@@ -16,25 +16,27 @@
 
 namespace Settings
 {
-    class SettingGroup  :   public QObject
+    class SettingGroup  :   public QObject, public ISerializable
     {
             Q_OBJECT
 
         public:
-            SettingGroup();
+            SettingGroup(SettingGroup *parent = nullptr);
 
             /**
              * \brief Constructor
              * \param name, name of this SettingGroup group
              */
-            SettingGroup(const QString &name);
+            SettingGroup(const QString &name, SettingGroup *parent = nullptr);
 
             /**
              * \brief Copy constructor
              * \param other, The other object from which will be copied
              */
-            SettingGroup(const SettingGroup &other);
+            //SettingGroup(const SettingGroup &other, SettingGroup *parent = nullptr);
             ~SettingGroup();
+
+            SettingGroup *getParent() const;
 
             /**
              * \brief setName
@@ -48,12 +50,14 @@ namespace Settings
              */
             const QString &getName() const;
 
+            bool isEmpty() const;
+
             /**
              * \brief operator=
              * \param other, The other object from which will be copied
              * \return returns a reference to this
              */
-            const SettingGroup &operator=(const SettingGroup &other);
+            //const SettingGroup &operator=(const SettingGroup &other);
 
             /**
              * \brief operator[]
@@ -61,7 +65,7 @@ namespace Settings
              * \return returns the setting with the name
              *         returns a dummy setting if the index is out of range
              */
-            Setting &operator[](const QString &name);
+            //Setting &operator[](const QString &name);
 
             /**
              * \brief operator[]
@@ -69,7 +73,7 @@ namespace Settings
              * \return returns the setting at that index
              *         returns a dummy setting if the index is out of range
              */
-            Setting &operator[](size_t index);
+            //Setting &operator[](size_t index);
 
             /**
              * \brief add
@@ -79,44 +83,88 @@ namespace Settings
              * \return true, if the setting was added successfully
              *         false, if the setting could not been added
              */
-            bool add(const Setting &setting);
+            bool add(Setting *setting);
 
             /**
              * \brief add
              * \param name, name of the setting
              * \param value, value of the setting
-             * \see add()
+             * \return pointer to the added setting. nullptr if setting could not been created.
              */
-            bool add(const QString &name, const QVariant value);
+            Setting *add(const QString &name, const QVariant &value);
+
+            /**
+             * \brief add
+             * \details adds the setting to the list if no setting with the same
+             *          name already exists in the list.
+             * \param setting, the setting which will be added
+             * \return true, if the setting was added successfully
+             *         false, if the setting could not been added
+             */
+            bool add(SettingGroup *group);
+
             /**
              * \brief add
              * \param setting, pair of name and value for the setting
              * \see add()
              */
-            bool add(const std::pair<QString,QVariant> &setting);
+            //bool add(const std::pair<QString,QVariant> &setting);
 
             /**
              * \brief remove
-             * \details removes a setting with the same name as the setting parameter
+             * \details removes a setting with the same name as the setting parameter.
+             *          It will not be deleted on removal.
              * \param setting, the setting which shuld be removed
              * \return true, if the setting was removed successfully
              *         false, if the setting was not in the list
              */
-            bool remove(const Setting &setting);
+            bool remove(Setting *setting);
 
             /**
-             * \brief remove
+             * \brief removeSetting
              * \param name, the name of the setting which shuld be removed
              * \see remove()
+             * \return the removed setting. It will not be deleted on removal.
+             *         nullptr if the setting was not found.
              */
-            bool remove(const QString &name);
+            Setting *removeSetting(const QString &name);
 
             /**
-             * \brief remove
+             * \brief removeSetting
              * \param index, the index of the setting which shuld be removed
              * \see remove()
+             * \return the removed setting. It will not be deleted on removal.
+             *         nullptr if the setting was not found.
              */
-            bool remove(size_t index);
+            Setting *removeSetting(size_t index);
+
+            /**
+             * \brief removeGroup
+             * \details removes a setting group with the same name as the group parameter.
+             *          It will not be deleted on removal.
+             * \param group, the setting group which shuld be removed
+             * \return true, if the setting group was removed successfully
+             *         false, if the setting group was not in the list
+             */
+            bool remove(SettingGroup *group);
+
+            /**
+             * \brief removeGroup
+             * \param name, the name of the setting group which shuld be removed
+             * \see remove()
+             * \return the removed setting group. It will not be deleted on removal.
+             *         nullptr if the setting was not found.
+             */
+            SettingGroup *removeGroup(const QString &name);
+
+            /**
+             * \brief removeGroup
+             * \param index, the index of the setting group which shuld be removed
+             * \see remove()
+             * \return the removed setting group. It will not be deleted on removal.
+             *         nullptr if the setting was not found.
+             */
+            SettingGroup *removeGroup(size_t index);
 
             /**
              * \brief removes all SettingGroup from the list
@@ -129,7 +177,8 @@ namespace Settings
              * \return true, if the setting with the name exists in the list
              *         false, if the setting with the name does not exist in the list
              */
-            bool exists(const QString &name) const;
+            bool settingExists(const QString &name) const;
+            bool childGroupExists(const QString &name) const;
 
             /**
              * \brief getIndex
@@ -137,13 +186,25 @@ namespace Settings
              * \return returns the index of setting with the name list
              *         returns SettingGroup::npos, if no such setting exists in the list
              */
-            size_t getIndex(const QString &name) const;
+            size_t getSettingIndex(const QString &name) const;
+            size_t getChildGroupIndex(const QString &name) const;
+
+            Setting *getSetting(size_t index) const;
+            Setting *getSetting(const QString &name) const;
+            SettingGroup *getChildGroup(size_t index) const;
+            SettingGroup *getChildGroup(const QString &name) const;
 
             /**
-             * \brief getSize
-             * \return returns the amount of SettingGroup in the list
+             * \brief getSettingsCount
+             * \return returns the amount of settings in the list
              */
-            size_t getSize() const;
+            size_t getSettingsCount() const;
+
+            /**
+             * \brief getChildGroupCount
+             * \return returns the amount of setting groups in the list
+             */
+            size_t getChildGroupCount() const;
 
             /**
              * \brief toString
@@ -164,6 +225,10 @@ namespace Settings
              */
             friend QDebug operator<<(QDebug debug, const SettingGroup &SettingGroup);
 
+            QJsonObject save() const override;              //!<\see ISerializable::save()
+            bool read(const QJsonObject &reader) override;  //!<\see ISerializable::read()
+
+
 
             static const size_t npos = -1; //!< The no position index of an array
         signals:
@@ -171,31 +236,58 @@ namespace Settings
              * \brief settingValueChanged
              * \details Will be emitted if the setting value has been changed
              */
-            void settingValueChanged(const Setting &setting);
+            void settingValueChanged(Setting *setting);
 
             /**
              * \brief settingNameChanged
              * \details Will be emitted if the setting name has been changed
              */
-            void settingNameChanged(const Setting &setting);
+            void settingNameChanged(Setting *setting);
 
             /**
              * \brief settingAdded
              * \details Will be emitted if a setting was added to the list
              */
-            void settingAdded(const Setting &setting);
+            void settingAdded(Setting *setting);
+
+            /**
+             * \brief childGroupAdded
+             * \details Will be emitted if a setting group was added to the list
+             */
+            void childGroupAdded(SettingGroup *group);
 
             /**
              * \brief settingRemoved
-             * \details Will be emitted a setting got removed from the list
+             * \param setting which got removed. It was not deleted.
+             * \details Will be emitted if a setting got removed from the list
              */
-            void settingRemoved();
+            void settingRemoved(Setting *setting);
+
+            /**
+             * \brief childGroupRemoved
+             * \param group which got removed. It was not deleted.
+             * \details Will be emitted if a child SettingsList got removed
+             */
+            void childGroupRemoved(SettingGroup *group);
+
+            /**
+             * \brief settingDeleted
+             * \details Will be emitted if a setting got deleted
+             */
+            void settingDeleted();
+
+            /**
+             * \brief childGroupDeleted
+             * \details Will be emitted if a child SettingsList got deleted
+             */
+            void childGroupDeleted();
 
             /**
              * \brief SettingGroupCleared
              * \details Will be emitted if the SettingGroup list was cleared
              */
-            void SettingGroupCleared();
+            void cleared();
+
         public slots:
 
         private slots:
@@ -205,12 +297,20 @@ namespace Settings
 
         protected:
 
-        private:
+        private:            
             void connectSignals(Setting *setting);
             void disconnectSignals(Setting *setting);
+            void connectSignals(SettingGroup *settings);
+            void disconnectSignals(SettingGroup *settings);
+            void connectSignals();
+            void disconnectSignals();
 
             QString m_name;
-            std::vector<Setting*> m_SettingGroup;
+            SettingGroup *m_parent;
+            std::vector<Setting*> m_settings;
+            std::vector<SettingGroup*> m_settingGroups;
+
+            bool m_isEmpty; // true if no setting got added.
 
     };
 }

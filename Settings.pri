@@ -12,7 +12,7 @@ HEADERS += \
     $$inc/settingsDeclaration.h \
     $$inc/setting.h \
     $$inc/settingGroup.h \
-    $$inc/serializer/serializer.h \
+    $$inc/serializer/ISerializable.h \
 
 SOURCES += \
     $$src/init.cpp \
