@@ -4,5 +4,8 @@
 namespace Settings
 {
     class Setting;
+    class JsonSetting;
+
     class SettingGroup;
+    class JsonSettingGroup;
 }

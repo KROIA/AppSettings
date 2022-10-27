@@ -1,5 +1,6 @@
 #include <QtTest>
-#include "settingGroup.h"
+#include "SettingGroup.h"
+#include "Setting.h"
 // add necessary includes here
 
 using namespace Settings;
@@ -20,6 +21,7 @@ class TestSettingGroup : public QObject
         void editSettings();
         void removeSettings();
         void clearSettings();
+        void childSettingGroup();
 
     public slots:
         void onSettingValueChanged(Setting *setting);
@@ -70,11 +72,11 @@ void TestSettingGroup::cleanupTestCase()
 void TestSettingGroup::createSettings()
 {
     QSignalSpy settingsAddedSpy(m_settings, &SettingGroup::settingAdded);
-    m_settings->add("FirstSetting",123);
+    QVERIFY(m_settings->add("FirstSetting",123) != nullptr);
     QCOMPARE(settingsAddedSpy.count(), 1);
-    m_settings->add("SecondSetting","text");
+    QVERIFY(m_settings->add("SecondSetting","text") != nullptr);
     QCOMPARE(settingsAddedSpy.count(), 2);
-    m_settings->add("ThirtSetting",1.58);
+    QVERIFY(m_settings->add("ThirtSetting",1.58) != nullptr);
     QCOMPARE(settingsAddedSpy.count(), 3);
     QCOMPARE(m_settings->getName(),m_settingsName);
     QVERIFY(m_settings->getSettingsCount() == 3);
@@ -137,6 +139,44 @@ void TestSettingGroup::clearSettings()
     QVERIFY((*m_settings).getSetting("FirstSetting")  == nullptr); // Must QWarning
     QVERIFY((*m_settings).getSetting("SecondSetting") == nullptr); // Must QWarning
     QVERIFY((*m_settings).getSetting("ThirtSetting")  == nullptr); // Must QWarning
+}
+
+void TestSettingGroup::childSettingGroup()
+{
+    QVERIFY(m_settings->add("FirstSetting",123) != nullptr);
+    QVERIFY(m_settings->add("SecondSetting","text") != nullptr);
+    QVERIFY(m_settings->add("ThirtSetting",1.58) != nullptr);
+
+    SettingGroup *childGroup = new SettingGroup();
+    Setting *setting1 = childGroup->add("setting1","val1");
+    Setting *setting2 = childGroup->add("setting2","val2");
+    QVERIFY(setting1->getParent() == childGroup);
+    QVERIFY(setting2->getParent() == childGroup);
+
+    QCOMPARE(m_settings->getChildGroupCount(), 0);
+    QCOMPARE(m_settings->getSettingsCount(), 3);
+
+    QVERIFY(m_settings->add(childGroup) == false); // name of the child is empty
+    childGroup->setName("childSettings");
+    QVERIFY(m_settings->add(childGroup));
+
+    SettingGroup *ch = m_settings->getChildGroup("childSettings");
+    QVERIFY(ch != nullptr);
+    if(ch)
+    {
+        QVERIFY(setting1->getParent() == childGroup);
+        QVERIFY(setting2->getParent() == childGroup);
+        QVERIFY(ch->getParent() == m_settings);
+        QVERIFY(ch->getSettingsCount() == 2);
+        QVERIFY(m_settings->removeGroup(ch) == ch);
+        QVERIFY(ch->getSettingsCount() == 2);
+        QCOMPARE(m_settings->getChildGroupCount(), 0);
+        QCOMPARE(m_settings->getSettingsCount(), 3);
+        QVERIFY(ch->getParent() == nullptr);
+        QVERIFY(setting1->getParent() == childGroup);
+        QVERIFY(setting2->getParent() == childGroup);
+    }
+
 }
 
 

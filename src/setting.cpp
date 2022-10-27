@@ -3,26 +3,26 @@
 
 namespace Settings
 {
-Setting::Setting(SettingGroup *parent)
+Setting::Setting()
     : QObject()
 {
-    m_parent = parent;
+    m_parent = nullptr;
 }
-Setting::Setting(const Setting &other, SettingGroup *parent)
+Setting::Setting(const Setting &other)
     : QObject()
 {
-    m_parent = parent;
+    m_parent = nullptr;
     m_parameter = other.m_parameter;
 }
-Setting::Setting(const QString &name, const QVariant value, SettingGroup *parent)
+Setting::Setting(const QString &name, const QVariant value)
 {
-    m_parent = parent;
+    m_parent = nullptr;
     m_parameter.first = name;
     m_parameter.second = value;
 }
-Setting::Setting(const std::pair<QString,QVariant> &setting, SettingGroup *parent)
+Setting::Setting(const std::pair<QString,QVariant> &setting)
 {
-    m_parent = parent;
+    m_parent = nullptr;
     m_parameter = setting;
 }
 Setting::~Setting()
@@ -37,6 +37,31 @@ void Setting::setParent(SettingGroup *parent)
 SettingGroup* Setting::getParent() const
 {
     return m_parent;
+}
+
+bool Setting::operator==(const Setting& other)
+{
+    if(m_parameter.second == other.m_parameter.second)
+        return true;
+    return false;
+}
+bool Setting::operator==(const QVariant& otherValue)
+{
+    if(m_parameter.second == otherValue)
+        return true;
+    return false;
+}
+bool Setting::operator!=(const Setting& other)
+{
+    if(m_parameter.second != other.m_parameter.second)
+        return true;
+    return false;
+}
+bool Setting::operator!=(const QVariant& otherValue)
+{
+    if(m_parameter.second != otherValue)
+        return true;
+    return false;
 }
 
 const Setting &Setting::operator=(const Setting &other)
@@ -72,41 +97,6 @@ QDebug operator<<(QDebug debug, const Setting &setting)
     debug.nospace() << setting.toString();
     return debug;
 }
-QJsonObject Setting::save() const
-{
-    return QJsonObject
-    {
-        // Add the properties of this object here
-        // Do not take the same keyvalues two times,
-        // also not the keys of the base class
-        {"key" , m_parameter.first},
-        {"val",  m_parameter.second.toString()},
-    };
-}
-bool Setting::read(const QJsonObject &reader)
-{
-    // Read the values for this class
-    m_parameter.first = reader["key"].toString();
-    QString valueStr = reader["val"].toString();
-    bool okFloat = false;
-    bool okInt = false;
-
-    float floatVal = valueStr.toFloat(&okFloat);
-    if(okFloat)
-    {
-        m_parameter.second = floatVal;
-        return true;
-    }
-
-    int intVal = valueStr.toFloat(&okInt);
-    if(okInt)
-    {
-        m_parameter.second = intVal;
-        return true;
-    }
-    m_parameter.second = valueStr;
-    return true;
-}
 void Setting::setValue(const QVariant &value)
 {
     if(m_parameter.second == value) return;
@@ -124,6 +114,12 @@ void Setting::setName(const QString &name)
             << " to " << name << "\nsame name already exists in " << m_parent->getName();
             return;
         }
+    if(name == "")
+    {
+        SETTINGS_WARNING_PRETTY << "Unable to change name from" << m_parameter.first
+        << " to " << name << "\nnew name is empty";
+        return;
+    }
     m_parameter.first = name;
     emit nameChanged(m_parameter.first);
 }

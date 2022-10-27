@@ -8,13 +8,17 @@ INCLUDEPATH += \
     $$inc/serializer
 
 HEADERS += \
+    $$PWD/inc/JsonSetting.h \
+    $$PWD/inc/JsonSettingGroup.h \
     $$inc/init.h \
-    $$inc/settingsDeclaration.h \
-    $$inc/setting.h \
-    $$inc/settingGroup.h \
-    $$inc/serializer/ISerializable.h \
+    $$inc/SettingsDeclaration.h \
+    $$inc/Setting.h \
+    $$inc/SettingGroup.h \
+    $$inc/serializer/IJsonSerializable.h \
 
 SOURCES += \
+    $$PWD/src/JsonSettingGroup.cpp \
+    $$src/JsonSetting.cpp \
     $$src/init.cpp \
-    $$src/setting.cpp \
-    $$src/settingGroup.cpp \
+    $$src/Setting.cpp \
+    $$src/SettingGroup.cpp \

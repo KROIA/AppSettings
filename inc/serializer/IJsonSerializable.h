@@ -3,9 +3,10 @@
 
 namespace Settings
 {
-    class ISerializable
+    class IJsonSerializable
     {
         public:
+
 
             /**
              * \brief Reimplement this function in each derived class.

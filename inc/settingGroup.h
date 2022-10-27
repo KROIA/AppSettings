@@ -1,40 +1,42 @@
 #pragma once
-/**
- * \author  Alex Krieg
- * \version 00.00.00
- * \date    04.10.2022
- *
- * \brief This class is used to store multiple
- *        unique(by name) SettingGroup
- *
- */
+
 
 #include <QObject>
 #include <vector>
-#include "setting.h"
-//#include "SettingGroupDeclaration.h"
+//#include "Setting.h"
+#include "SettingsDeclaration.h"
 
 namespace Settings
 {
-    class SettingGroup  :   public QObject, public ISerializable
+
+    /**
+     * \author  Alex Krieg
+     * \version 00.00.01
+     * \date    27.10.2022
+     *
+     * \brief This class is used to store multiple
+     *        unique(by name) Settings
+     *
+     */
+    class SettingGroup  :   public QObject
     {
             Q_OBJECT
 
         public:
-            SettingGroup(SettingGroup *parent = nullptr);
+            SettingGroup();
 
             /**
              * \brief Constructor
              * \param name, name of this SettingGroup group
              */
-            SettingGroup(const QString &name, SettingGroup *parent = nullptr);
+            SettingGroup(const QString &name);
 
             /**
              * \brief Copy constructor
              * \param other, The other object from which will be copied
              */
             //SettingGroup(const SettingGroup &other, SettingGroup *parent = nullptr);
-            ~SettingGroup();
+            virtual ~SettingGroup();
 
             SettingGroup *getParent() const;
 
@@ -118,7 +120,7 @@ namespace Settings
              * \return true, if the setting was removed successfully
              *         false, if the setting was not in the list
              */
-            bool remove(Setting *setting);
+            bool removeSetting(Setting *setting);
 
             /**
              * \brief removeSetting
@@ -143,10 +145,10 @@ namespace Settings
              * \details removes a setting group with the same name as the group parameter.
              *          It will not be deleted on removal.
              * \param group, the setting group which shuld be removed
-             * \return true, if the setting group was removed successfully
-             *         false, if the setting group was not in the list
+             * \return the removed setting group. It will not be deleted on removal.
+             *         nullptr if the setting was not found.
              */
-            bool remove(SettingGroup *group);
+            SettingGroup *removeGroup(SettingGroup *group);
 
             /**
              * \brief removeGroup
@@ -194,6 +196,18 @@ namespace Settings
             SettingGroup *getChildGroup(size_t index) const;
             SettingGroup *getChildGroup(const QString &name) const;
 
+            template<typename T>
+            T *getSetting(size_t index) const;
+
+            template<typename T>
+            T *getSetting(const QString &name) const;
+
+            template<typename T>
+            T *getChildGroup(size_t index) const;
+
+            template<typename T>
+            T *getChildGroup(const QString &name) const;
+
             /**
              * \brief getSettingsCount
              * \return returns the amount of settings in the list
@@ -225,8 +239,6 @@ namespace Settings
              */
             friend QDebug operator<<(QDebug debug, const SettingGroup &SettingGroup);
 
-            QJsonObject save() const override;              //!<\see ISerializable::save()
-            bool read(const QJsonObject &reader) override;  //!<\see ISerializable::read()
 
 
 
@@ -288,6 +300,12 @@ namespace Settings
              */
             void cleared();
 
+            /**
+             * \brief nameChanged
+             * \details Will be emitted if the SettingGroup name has been changed
+             */
+            void nameChanged(const QString &name);
+
         public slots:
 
         private slots:
@@ -295,15 +313,17 @@ namespace Settings
             void onSettingNameChanged(const QString &parameterName);
             void onSettingDestroyed(QObject *obj);
 
-        protected:
+            //void onChildGroupNameChanged(const QString &groupName);
 
-        private:            
+        protected:         
             void connectSignals(Setting *setting);
             void disconnectSignals(Setting *setting);
             void connectSignals(SettingGroup *settings);
             void disconnectSignals(SettingGroup *settings);
             void connectSignals();
             void disconnectSignals();
+
+            virtual Setting *createSettingInstance();
 
             QString m_name;
             SettingGroup *m_parent;
@@ -313,5 +333,29 @@ namespace Settings
             bool m_isEmpty; // true if no setting got added.
 
     };
+
+    template<typename T>
+    T *SettingGroup::getSetting(size_t index) const
+    {
+        return dynamic_cast<T*>(getSetting(index));
+    }
+
+    template<typename T>
+    T *SettingGroup::getSetting(const QString &name) const
+    {
+        return dynamic_cast<T*>(getSetting(name));
+    }
+
+    template<typename T>
+    T *SettingGroup::getChildGroup(size_t index) const
+    {
+        return dynamic_cast<T*>(getChildGroup(index));
+    }
+
+    template<typename T>
+    T *SettingGroup::getChildGroup(const QString &name) const
+    {
+        return dynamic_cast<T*>(getChildGroup(name));
+    }
 }
 Q_DECLARE_METATYPE(Settings::SettingGroup);

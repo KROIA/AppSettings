@@ -1,23 +1,24 @@
 #pragma once
-/**
- * \author  Alex Krieg
- * \version 00.00.00
- * \date    04.10.2022
- *
- * \brief This class is used to store a name with a value.
- *
- */
+
 
 #include <QObject>
 #include <QVariant>
 #include <utility>
-#include "settingsDeclaration.h"
-#include "ISerializable.h"
+#include "SettingsDeclaration.h"
 
 
 namespace Settings
 {
-    class Setting  :   public QObject, public ISerializable
+
+    /**
+     * \author  Alex Krieg
+     * \version 00.00.01
+     * \date    27.10.2022
+     *
+     * \brief This class is used to store a name with a value.
+     *
+     */
+    class Setting  :   public QObject
     {
             Q_OBJECT
 
@@ -25,40 +26,65 @@ namespace Settings
 
             /**
              * \brief Constructor
-             * \param parent, The parent SettingGroup object, this setting is
-             *                contained in
              */
-            Setting(SettingGroup *parent = nullptr);
+            Setting();
 
             /**
              * \brief Copy constructor
              * \param other, The other object from which will be copied
-             * \param parent, The parent SettingGroup object, this setting is
-             *                contained in
              */
-            Setting(const Setting &other, SettingGroup *parent = nullptr);
+            Setting(const Setting &other);
 
             /**
              * \brief Constructor
              * \param name,  The name of the setting
              * \param value, The value of the parameter, can by any QVariant compatible type
-             * \param parent, The parent SettingGroup object, this setting is
-             *                contained in
              */
-            Setting(const QString &name, const QVariant value, SettingGroup *parent = nullptr);
+            Setting(const QString &name, const QVariant value);
 
             /**
              * \brief Constructor
              * \param setting,  a pair of name and value
-             * \param parent, The parent SettingGroup object, this setting is
-             *                contained in
              */
-            Setting(const std::pair<QString,QVariant> &setting, SettingGroup *parent = nullptr);
+            Setting(const std::pair<QString,QVariant> &setting);
 
-            ~Setting();
+            virtual ~Setting();
 
+            /**
+             * @brief setParent
+             * @param parent of which this setting is a child of
+             */
             void setParent(SettingGroup *parent);
+
+            /**
+             * @brief getParent
+             * @return parent to this setting
+             */
             SettingGroup* getParent() const;
+
+            /**
+             * @brief operator ==
+             * @param other parameter to compare the value to this value
+             * @return true if both setting values are equal. Not comparing the name of the setting
+             */
+            bool operator==(const Setting& other);
+
+            /**
+             * @see operator==()
+             */
+            bool operator==(const QVariant& otherValue);
+
+            /**
+             * @brief operator !=
+             * @param other parameter to compare the value to this value
+             * @return true if both setting values are not equal. Not comparing the name of the setting
+             */
+            bool operator!=(const Setting& other);
+
+            /**
+             * @see operator!=()
+             */
+            bool operator!=(const QVariant& otherValue);
 
             /**
              * \brief assignement operator
@@ -109,8 +135,7 @@ namespace Settings
              */
             friend QDebug operator<<(QDebug debug, const Setting &setting);
 
-            QJsonObject save() const override;              //!<\see ISerializable::save()
-            bool read(const QJsonObject &reader) override;  //!<\see ISerializable::read()
+
 
         signals:
 
@@ -144,7 +169,6 @@ namespace Settings
 
         protected:
 
-        private:
             std::pair<QString,QVariant> m_parameter;
             SettingGroup *m_parent;
     };

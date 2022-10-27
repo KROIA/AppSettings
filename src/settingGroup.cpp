@@ -1,18 +1,19 @@
-#include "settingGroup.h"
+#include "SettingGroup.h"
+#include "Setting.h"
 
 namespace Settings
 {
 using std::vector;
-SettingGroup::SettingGroup(SettingGroup *parent)
+SettingGroup::SettingGroup()
 {
-    m_parent = parent;
     m_isEmpty = true;
+    m_parent = nullptr;
 }
-SettingGroup::SettingGroup(const QString &name, SettingGroup *parent)
+SettingGroup::SettingGroup(const QString &name)
 {
-    setName(name);
-    m_parent = parent;
+    m_parent = nullptr;
     m_isEmpty = true;
+    setName(name);
 }
 /*SettingGroup::SettingGroup(const SettingGroup &other, SettingGroup *parent)
 {
@@ -54,7 +55,23 @@ SettingGroup *SettingGroup::getParent() const
 }
 void SettingGroup::setName(const QString &name)
 {
+    if(m_name == name) return;
+
+    if(m_parent)
+        if(m_parent->childGroupExists(name))
+        {
+            SETTINGS_WARNING_PRETTY << "Unable to change name from" << m_name
+            << " to " << name << "\nsame name already exists in " << m_parent->getName();
+            return;
+        }
+    if(name == "")
+    {
+        SETTINGS_WARNING_PRETTY << "Unable to change name from" << m_name
+        << " to " << name << "\nnew name is empty";
+        return;
+    }
     m_name = name;
+    emit nameChanged(m_name);
 }
 const QString &SettingGroup::getName() const
 {
@@ -111,8 +128,8 @@ bool SettingGroup::add(Setting *setting)
         return false;
     }
     if(setting->getParent() != nullptr)
-        setting->getParent()->remove(setting);
-    setting->setParent(this);
+        setting->getParent()->removeSetting(setting);
+    setting->Setting::setParent(this);
     connectSignals(setting);
     m_settings.push_back(setting);
     m_isEmpty = false;
@@ -127,7 +144,10 @@ Setting* SettingGroup::add(const QString &name, const QVariant &value)
                    << " already contains such a setting: " << m_settings[getSettingIndex(name)]->toString();
         return nullptr;
     }
-    Setting *newSetting = new Setting(name,value, this);
+    Setting *newSetting = createSettingInstance();
+    newSetting->setName(name);
+    newSetting->setValue(value);
+    newSetting->setParent(this);
     connectSignals(newSetting);
     m_settings.push_back(newSetting);
     m_isEmpty = false;
@@ -138,6 +158,12 @@ bool SettingGroup::add(SettingGroup *group)
 {
     if(!group)
         return false;
+    if(group->getName() == "")
+    {
+        SETTINGS_WARNING_PRETTY<< "Group can't be added to " << m_name
+                   << ". The group you try to add has no name";
+        return false;
+    }
     if(childGroupExists(group->getName()))
     {
         SETTINGS_WARNING_PRETTY<< "SettingGroup list: " << m_name
@@ -145,8 +171,8 @@ bool SettingGroup::add(SettingGroup *group)
         return false;
     }
     if(group->m_parent)
-        group->m_parent->remove(group);
-    group->setParent(this);
+        group->m_parent->removeGroup(group);
+    group->m_parent = this;
     connectSignals(group);
     m_settingGroups.push_back(group);
     m_isEmpty = false;
@@ -167,7 +193,7 @@ bool SettingGroup::add(SettingGroup *group)
     emit settingAdded(*newSetting);
     return true;
 }*/
-bool SettingGroup::remove(Setting *setting)
+bool SettingGroup::removeSetting(Setting *setting)
 {
     if(!setting)
         return false;
@@ -185,7 +211,7 @@ Setting *SettingGroup::removeSetting(size_t index)
         Setting *setting = m_settings[index];
         m_settings.erase(m_settings.begin() + index);
         disconnectSignals(setting);
-        setting->setParent(nullptr);
+        setting->Setting::setParent(nullptr);
         if(isEmpty())
             m_isEmpty = true;
         emit settingRemoved(setting);
@@ -194,10 +220,10 @@ Setting *SettingGroup::removeSetting(size_t index)
     return nullptr;
 }
 
-bool SettingGroup::remove(SettingGroup *setting)
+SettingGroup *SettingGroup::removeGroup(SettingGroup *setting)
 {
     if(!setting)
-        return false;
+        return nullptr;
     return removeGroup(setting->getName());
 }
 SettingGroup *SettingGroup::removeGroup(const QString &name)
@@ -210,9 +236,9 @@ SettingGroup *SettingGroup::removeGroup(size_t index)
     if(m_settings.size() >= index)
     {
         SettingGroup *group = m_settingGroups[index];
-        m_settings.erase(m_settings.begin() + index);
+        m_settingGroups.erase(m_settingGroups.begin() + index);
         disconnectSignals(group);
-        group->setParent(nullptr);
+        group->m_parent = nullptr;
         if(isEmpty())
             m_isEmpty = true;
         emit childGroupRemoved(group);
@@ -227,12 +253,12 @@ void SettingGroup::clear()
     for(size_t i=0; i<m_settings.size(); ++i)
     {
         disconnectSignals(m_settings[i]);
-        m_settings[i]->setParent(nullptr);
+        m_settings[i]->Setting::setParent(nullptr);
     }
     for(size_t i=0; i<m_settingGroups.size(); ++i)
     {
         disconnectSignals(m_settingGroups[i]);
-        m_settingGroups[i]->setParent(nullptr);
+        m_settingGroups[i]->m_parent = nullptr;
     }
     m_settings.clear();
     m_settingGroups.clear();
@@ -333,71 +359,7 @@ QDebug operator<<(QDebug debug, const SettingGroup &SettingGroup)
     debug.nospace() << SettingGroup.toString();
     return debug;
 }
-QJsonObject SettingGroup::save() const
-{
-    QJsonObject writer;
-    writer["name"] = m_name;
-    writer["settingCount"] = (int)m_settings.size();
-    writer["childGroupCount"] = (int)m_settingGroups.size();
-    for(size_t i=0; i<m_settings.size(); ++i)
-    {
-        writer["S"+QString::number(i)] = m_settings[i]->save();
-    }
-    for(size_t i=0; i<m_settingGroups.size(); ++i)
-    {
-        writer["C"+QString::number(i)] = m_settingGroups[i]->save();
-    }
-    return writer;
-}
-bool SettingGroup::read(const QJsonObject &reader)
-{
-    bool success = true;
-    m_name = reader["name"].toString("Settings");
-    int settingsCount = reader["settingCount"].toInt();
-    int childGroupsCount = reader["childGroupCount"].toInt();
-    if(m_isEmpty)
-    {
-        // Generating mode
-        for(int i=0; i<settingsCount; ++i)
-        {
-            QJsonObject settingData = reader["S"+QString::number(i)].toObject();
-            Setting newSetting;
 
-            success &= newSetting.read(settingData);
-            success &= add(newSetting.getName(), newSetting.getValue()) != nullptr;
-        }
-        for(int i=0; i<childGroupsCount; ++i)
-        {
-            QJsonObject groupData = reader["C"+QString::number(i)].toObject();
-            SettingGroup *newGroup = new SettingGroup();
-            newGroup->read(groupData);
-
-            success &= newGroup->read(groupData);
-
-            if(!add(newGroup))
-            {
-
-            }
-        }
-    }
-    else
-    {
-        // Overwrite mode
-        for(int i=0; i<settingsCount; ++i)
-        {
-            QJsonObject settingData = reader["S"+QString::number(i)].toObject();
-            Setting newSetting;
-
-            success &= newSetting.read(settingData);
-            Setting *setting = getSetting(newSetting.getName());
-            if(setting)
-                setting->setValue(newSetting.getValue());
-            else
-                success = false;
-        }
-    }
-    return success;
-}
 void SettingGroup::onSettingValueChanged(const QVariant&)
 {
     Setting* setting = qobject_cast<Setting*>(QObject::sender());
@@ -447,6 +409,10 @@ void SettingGroup::onSettingDestroyed(QObject *obj)
         }
     }
 }
+/*void SettingGroup::onChildGroupNameChanged(const QString &groupName)
+{
+
+}*/
 void SettingGroup::connectSignals(Setting *setting)
 {
     if(!setting) return;
@@ -494,5 +460,9 @@ void SettingGroup::disconnectSignals()
     {
         disconnectSignals(m_settings[i]);
     }
+}
+Setting *SettingGroup::createSettingInstance()
+{
+    return new Setting();
 }
 }
