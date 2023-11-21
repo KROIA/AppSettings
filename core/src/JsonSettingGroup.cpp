@@ -119,7 +119,11 @@ bool JsonSettingGroup::saveToFile(const QString &jsonFile)
     if( file.open( QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate ) )
     {
         QTextStream iStream( &file );
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
         iStream.setEncoding(QStringConverter::Encoding::Utf8);
+#else
+        iStream.setCodec("UTF-8");
+#endif
         iStream << bytes;
         file.close();
         return true;

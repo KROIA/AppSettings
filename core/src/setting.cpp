@@ -1,5 +1,6 @@
 #include "setting.h"
 #include "settingGroup.h"
+#include <QDebug>
 
 namespace Settings
 {

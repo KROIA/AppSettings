@@ -2,7 +2,7 @@
 
 
 #include "SettingGroup.h"
-#include "IJsonSerializable.h"
+#include "serializer/IJsonSerializable.h"
 
 namespace Settings
 {
@@ -18,6 +18,7 @@ namespace Settings
      */
     class JsonSettingGroup  :   public SettingGroup, public IJsonSerializable
     {
+        
          public:
             JsonSettingGroup();
 

@@ -24,6 +24,7 @@ namespace Settings
 
         public:
             SettingGroup();
+            SettingGroup(const SettingGroup &other);
 
             /**
              * \brief Constructor

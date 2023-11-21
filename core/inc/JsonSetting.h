@@ -1,6 +1,6 @@
 #pragma once
 
-#include "IJsonSerializable.h"
+#include "serializer/IJsonSerializable.h"
 #include "Setting.h"
 
 namespace Settings

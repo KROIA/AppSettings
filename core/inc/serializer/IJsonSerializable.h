@@ -1,4 +1,6 @@
 #pragma once
+
+#include "Settings_base.h"
 #include <QJsonObject>
 
 namespace Settings

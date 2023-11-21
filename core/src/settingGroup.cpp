@@ -1,5 +1,6 @@
 #include "SettingGroup.h"
 #include "Setting.h"
+#include <QDebug>
 
 namespace Settings
 {
@@ -8,6 +9,10 @@ SettingGroup::SettingGroup()
 {
     m_isEmpty = true;
     m_parent = nullptr;
+}
+SettingGroup::SettingGroup(const SettingGroup& other)
+{
+
 }
 SettingGroup::SettingGroup(const QString &name)
 {
