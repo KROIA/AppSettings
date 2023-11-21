@@ -1,33 +1,16 @@
 
+#include <iostream>
 #include "test.h"
+#include "test_simple.h"
 
-class TestTest : public Test
-{
-public:
-	TestTest()
-		: Test("TestTest")
-	{
-			ADD_TEST(TestTest::test1);
-		
-	}
-	// Dummy test
-
-	bool test1(TestResults& results)
-	{
-		TEST_START(results);
-
-		TEST_MESSAGE("This is a test message");
-
-		TEST_END;
-	}
-};
-
+Test_simple test_simple;
 
 int main(int argc, char** argv)
 {
-	TestTest t;
-	t.runTests();
-	Test::TestResults r = t.getResults();
+	std::cout << "Running "<< Test::getTests().size() << " tests...\n";
+	Test::TestResults results;
+	Test::runAllTests(results);
+	Test::printResults(results);
 
 	return 0;
 }

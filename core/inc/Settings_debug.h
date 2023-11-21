@@ -1,5 +1,13 @@
 #pragma once
 
+
+#ifdef NDEBUG
+#define SETTINGS_WARNING_PRETTY
+#else
+#include <QDebug>
+#define SETTINGS_WARNING_PRETTY qWarning() << __PRETTY_FUNCTION__ << " : "
+#endif
+
 // Profiling
 #ifdef SETTINGS_PROFILING
 #include <easy/profiler.h>

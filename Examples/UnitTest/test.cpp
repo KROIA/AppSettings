@@ -1,15 +1,19 @@
 #include "test.h"
 #include <iostream>
 
+std::vector<Test*> Test::s_tests;
+
 Test::Test(const std::string& name)
 	: m_name(name)
 	, m_breakTestOnFail(true)
 {
-
+	s_tests.push_back(this);
 }
 Test::~Test()
 {
-
+	auto &it = std::find(s_tests.begin(), s_tests.end(), this);
+	if (it != s_tests.end())
+		s_tests.erase(it);
 }
 
 
@@ -86,6 +90,26 @@ void Test::printResultsRecursive(const TestResults& results, int depth)
 	{
 		printResultsRecursive(results.subResults[i], depth + 1);
 	}
+}
+
+const std::vector<Test*>& Test::getTests()
+{
+	return s_tests;
+}
+bool Test::runAllTests(TestResults& results)
+{
+	bool success = true;
+	for (size_t i = 0; i < s_tests.size(); ++i)
+	{
+		TestResults r;
+		success &= s_tests[i]->runTests(r);
+		results.subResults.emplace_back(std::move(r));
+	}
+	return success;
+}
+void Test::printResults(const TestResults& results)
+{
+	printResultsRecursive(results, 0);
 }
 
 /*void Test::addTest(TestFunction func)

@@ -1,10 +1,10 @@
 #pragma once
 
-
+#include "Settings_base.h"
+#include "IJsonSerializable.h"
 #include <QObject>
 #include <QVariant>
 #include <utility>
-#include "SettingsDeclaration.h"
 
 
 namespace Settings
@@ -12,13 +12,13 @@ namespace Settings
 
     /**
      * \author  Alex Krieg
-     * \version 00.00.01
-     * \date    27.10.2022
+     * \version 00.01.00
+     * \date    21.11.2023
      *
      * \brief This class is used to store a name with a value.
      *
      */
-    class Setting  :   public QObject
+    class SETTINGS_EXPORT Setting  :   public QObject, public IJsonSerializable
     {
             Q_OBJECT
 
@@ -40,7 +40,7 @@ namespace Settings
              * \param name,  The name of the setting
              * \param value, The value of the parameter, can by any QVariant compatible type
              */
-            Setting(const QString &name, const QVariant value);
+            Setting(const QString &name, const QVariant &value);
 
             /**
              * \brief Constructor
@@ -49,18 +49,6 @@ namespace Settings
             Setting(const std::pair<QString,QVariant> &setting);
 
             virtual ~Setting();
-
-            /**
-             * @brief setParent
-             * @param parent of which this setting is a child of
-             */
-            void setParent(SettingGroup *parent);
-
-            /**
-             * @brief getParent
-             * @return parent to this setting
-             */
-            SettingGroup* getParent() const;
 
             /**
              * @brief operator ==
@@ -137,6 +125,9 @@ namespace Settings
 
 
 
+            void save(QJsonObject& settings) const override;
+            bool read(const QJsonObject& reader) override;
+
         signals:
 
             /**
@@ -169,9 +160,8 @@ namespace Settings
 
         protected:
 
+
             std::pair<QString,QVariant> m_parameter;
-            SettingGroup *m_parent;
     };
 
 }
-Q_DECLARE_METATYPE(Settings::Setting);

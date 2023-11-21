@@ -47,7 +47,12 @@ public:
 	bool doesBreakOnFail() const;
 
 	void printResults() const;
+	
 
+
+	static const std::vector<Test*> &getTests();
+	static bool runAllTests(TestResults &results);
+	static void printResults(const TestResults& results);
 protected:
 
 #define ADD_TEST(test) addTest(this, &test)
@@ -79,6 +84,8 @@ private:
 
 	std::string m_name;
 	bool m_breakTestOnFail;
+
+	static std::vector<Test*> s_tests;
 };
 
 #define TEST_START(res) \
