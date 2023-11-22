@@ -28,16 +28,26 @@ namespace Settings
 		{
 			m_settings[i]->save(group);
 		}
-		settings[m_name] = std::move(group);
+		
+
+		
+		for (size_t i = 0; i < m_groups.size(); ++i)
+		{
+			//QJsonObject subGroup;
+			m_groups[i]->save(group);
+			//group[m_groups[i]->m_name+"Group"] = std::move(subGroup);
+		}
+		settings[getGroupKey()] = std::move(group);
+		
 	}
 	bool SettingsGroup::read(const QJsonObject& reader)
 	{
-		if (!reader.contains(m_name))
+		if (!reader.contains(getGroupKey()))
 		{
 			SETTINGS_WARNING_PRETTY << "No SettingsGroup with name: \"" << m_name << "\" found";
 			return false;
 		}
-		QJsonObject group = reader[m_name].toObject();
+		QJsonObject group = reader[getGroupKey()].toObject();
 		bool success = true;
 		for (size_t i = 0; i < m_settings.size(); ++i)
 		{
@@ -47,12 +57,26 @@ namespace Settings
 				success = false;
 			}
 		}
+		for (size_t i = 0; i < m_groups.size(); ++i)
+		{
+			//QJsonObject subGroup = group[m_groups[i]->m_name + "Group"].toObject();
+			success &= m_groups[i]->read(group);
+		}
 		return success;
 	}
 
 	void SettingsGroup::addSetting(Setting& setting)
 	{
 		m_settings.push_back(&setting);
+	}
+	void SettingsGroup::addGroup(SettingsGroup& group)
+	{
+		m_groups.push_back(&group);
+	}
+
+	QString SettingsGroup::getGroupKey() const
+	{
+		return m_name + "_Group";
 	}
 
 }

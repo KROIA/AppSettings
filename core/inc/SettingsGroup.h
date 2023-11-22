@@ -22,11 +22,14 @@ namespace Settings
 
 	protected:
 		void addSetting(Setting& setting);
+		void addGroup(SettingsGroup& group);
 
 	private:
+		QString getGroupKey() const;
 
 		QString m_name;
 		std::vector<Setting*> m_settings;
+		std::vector<SettingsGroup*> m_groups;
 
 	};
 }

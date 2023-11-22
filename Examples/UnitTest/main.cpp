@@ -3,6 +3,7 @@
 #include "tests.h"
 
 TEST_INSTANTIATE(Test_simple);
+TEST_INSTANTIATE(Test_nasted);
 
 int main(int argc, char** argv)
 {
