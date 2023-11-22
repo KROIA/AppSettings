@@ -1,9 +1,8 @@
 
 #include <iostream>
-#include "test.h"
-#include "test_simple.h"
+#include "tests.h"
 
-Test_simple test_simple;
+TEST_INSTANTIATE(Test_simple);
 
 int main(int argc, char** argv)
 {

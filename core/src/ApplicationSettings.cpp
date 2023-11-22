@@ -1,5 +1,6 @@
 #include "ApplicationSettings.h"
 #include <QFile>
+#include <QDir>
 #include <QJsonDocument>
 
 namespace Settings
@@ -48,6 +49,18 @@ namespace Settings
 		// Serialize a QJsonObject with all the settings
 		QJsonObject settings;
 		save_internal(settings);
+
+		// Check if the directory exists
+		QDir dir(m_path);
+		if (!dir.exists())
+		{
+			QDir dir2;
+			if (!dir2.mkpath(m_path))
+			{
+				SETTINGS_WARNING_PRETTY << "Failed to create directory: \"" << m_path << "\"";
+				return false;
+			}
+		}
 
 		// Write the QJsonObject to a file
 		QString filePath = getFilePath();

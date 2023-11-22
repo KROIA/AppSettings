@@ -18,9 +18,9 @@ class Test
 public:
     enum ResultState
     {
-        success,
-        none,
-        error
+		none,
+        pass,
+        fail
     };
     struct TestResult
     {
@@ -39,6 +39,7 @@ public:
 
 	Test(const std::string &name);
 	~Test();
+
 
     bool runTests();
     const TestResults &getResults() const;
@@ -74,8 +75,10 @@ protected:
     }
 
 private:
+	static std::vector<Test*>& getTestsInternal();
 	static void printResultsRecursive(const TestResults &results, int depth);
-    bool runTests(TestResults &results);
+    static void printColored(const std::string &str, int color);
+	bool runTests(TestResults &results);
 
     std::vector<TestFunction> m_testFunctions;
     std::vector<Test*> m_subTests;
@@ -85,13 +88,21 @@ private:
 	std::string m_name;
 	bool m_breakTestOnFail;
 
-	static std::vector<Test*> s_tests;
+	//static std::vector<Test*> s_tests;
 };
+
+#define TEST_CLASS(className) \
+	public: \
+	static className instance; \
+	private:
+
+#define TEST_INSTANTIATE(className) \
+	className className::instance;
 
 #define TEST_START(res) \
 	bool success = true; \
 	Test::TestResults &r = res; \
-	r.name = __PRETTY_FUNCTION__;
+	r.name = __FUNCTION__;
 
 #define TEST_END \
 	r.success = success; \
@@ -101,15 +112,15 @@ private:
 	if((a) == (b)) \
 	{ \
         Test::TestResult res; \
-        res.state = Test::ResultState::success; \
-        res.message = "Expected " + std::string(#a) + " to equal " + std::string(#b); \
+        res.state = Test::ResultState::pass; \
+        res.message = "Expected (" + std::string(#a) + ") to equal (" + std::string(#b) + ")"; \
 		r.results.push_back(res); \
     } \
 	else \
 	{ \
 		Test::TestResult res; \
-		res.state = Test::ResultState::error; \
-		res.message = "Expected " + std::string(#a) + " to equal " + std::string(#b); \
+		res.state = Test::ResultState::fail; \
+		res.message = "Expected (" + std::string(#a) + ") to equal (" + std::string(#b)+ ")"; \
 		r.results.push_back(res); \
 		success = false; \
 		if(doesBreakOnFail()) \
@@ -122,14 +133,14 @@ private:
 	if((condition)) \
 	{ \
 		Test::TestResult res; \
-		res.state = Test::ResultState::success; \
-		res.message = "Expected " + std::string(#condition) + " to be true"; \
+		res.state = Test::ResultState::pass; \
+		res.message = "Expected (" + std::string(#condition) + ") to be true"; \
 		r.results.push_back(res); \
 	} \
 	else \
 	{ \
 		Test::TestResult res; \
-		res.state = Test::ResultState::error; \
+		res.state = Test::ResultState::fail; \
 		res.message = assertMessage; \
 		r.results.push_back(res); \
 		success = false; \
@@ -140,7 +151,7 @@ private:
 	}
 
 #define TEST_ASSERT(condition) \
-    TEST_ASSERT_M(condition, "Expected " + std::string(#condition) + " to be true")
+    TEST_ASSERT_M(condition, "Expected (" + std::string(#condition) + ") to be true")
 
 #define TEST_MESSAGE(msg) \
 	{ \
@@ -153,7 +164,7 @@ private:
 #define TEST_FAIL(reason) \
 	{ \
 		Test::TestResult res; \
-		res.state = Test::ResultState::error; \
+		res.state = Test::ResultState::fail; \
 		res.message = reason; \
 		r.results.push_back(res); \
 		success = false; \

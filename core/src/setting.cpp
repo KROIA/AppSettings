@@ -98,8 +98,7 @@ bool Setting::read(const QJsonObject& reader)
 	}
 	else
 	{
-		m_parameter.second = reader[m_parameter.first].toVariant();
-        emit valueChanged(m_parameter.second);
+        setValue(reader[m_parameter.first].toVariant());
 		return true;
 	}
 }

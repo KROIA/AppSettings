@@ -9,4 +9,4 @@ set(QT_MODULES
     # Add any other required modules here
 )
 
-exampleMaster(Settings SETTINGS_PROFILING OFF ON "${QT_MODULES}" ${INSTALL_BIN_PATH})
+exampleMaster(Settings SETTINGS_PROFILING ON ON "${QT_MODULES}" ${INSTALL_BIN_PATH})

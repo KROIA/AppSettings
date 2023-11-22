@@ -17,7 +17,7 @@ set(QT_DEPLOY ON)
 # Find the necessary QT modules
 set(QT_MODULES
     Core
-    Widgets
+    # Widgets
     # Gui
     # Network
     # Add any other required modules here
