@@ -1,42 +1,28 @@
 #include "setting.h"
-#include "settingGroup.h"
 
-namespace Settings
+
+namespace AppSettings
 {
 Setting::Setting()
     : QObject()
 {
-    m_parent = nullptr;
 }
 Setting::Setting(const Setting &other)
     : QObject()
 {
-    m_parent = nullptr;
     m_parameter = other.m_parameter;
 }
-Setting::Setting(const QString &name, const QVariant value)
+Setting::Setting(const QString &name, const QVariant &value)
 {
-    m_parent = nullptr;
     m_parameter.first = name;
     m_parameter.second = value;
 }
 Setting::Setting(const std::pair<QString,QVariant> &setting)
 {
-    m_parent = nullptr;
     m_parameter = setting;
 }
 Setting::~Setting()
 {
-    m_parent = nullptr;
-}
-
-void Setting::setParent(SettingGroup *parent)
-{
-    m_parent = parent;
-}
-SettingGroup* Setting::getParent() const
-{
-    return m_parent;
 }
 
 bool Setting::operator==(const Setting& other)
@@ -97,6 +83,26 @@ QDebug operator<<(QDebug debug, const Setting &setting)
     debug.nospace() << setting.toString();
     return debug;
 }
+
+void Setting::save(QJsonObject& settings) const
+{
+    settings[m_parameter.first] = QJsonValue::fromVariant(m_parameter.second);
+}
+bool Setting::read(const QJsonObject& reader) 
+{
+    if (reader.find(m_parameter.first) == reader.end())
+    {
+        AS_CONSOLE_FUNCTION("Unable to read setting" << m_parameter.first.toStdString()
+		<< " from json object setting not found");
+		return false;
+	}
+	else
+	{
+        setValue(reader[m_parameter.first].toVariant());
+		return true;
+	}
+}
+
 void Setting::setValue(const QVariant &value)
 {
     if(m_parameter.second == value) return;
@@ -106,18 +112,10 @@ void Setting::setValue(const QVariant &value)
 void Setting::setName(const QString &name)
 {
     if(m_parameter.first == name) return;
-
-    if(m_parent)
-        if(m_parent->settingExists(name))
-        {
-            SETTINGS_WARNING_PRETTY << "Unable to change name from" << m_parameter.first
-            << " to " << name << "\nsame name already exists in " << m_parent->getName();
-            return;
-        }
     if(name == "")
     {
-        SETTINGS_WARNING_PRETTY << "Unable to change name from" << m_parameter.first
-        << " to " << name << "\nnew name is empty";
+        AS_CONSOLE_FUNCTION("Unable to change name from" << m_parameter.first.toStdString()
+        << " to " << name.toStdString() << "\nnew name is empty");
         return;
     }
     m_parameter.first = name;

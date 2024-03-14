@@ -1,6 +1,7 @@
 # Prerequisites
 *.d
 *.user
+*.vs
 
 # Compiled Object files
 *.slo
@@ -15,7 +16,7 @@
 # Compiled Dynamic libraries
 *.so
 *.dylib
-*.dll
+#*.dll
 
 # Fortran module files
 *.mod
@@ -24,7 +25,7 @@
 # Compiled Static libraries
 *.lai
 *.la
-*.a
+#*.a
 *.lib
 
 # Executables
@@ -32,5 +33,13 @@
 *.out
 *.app
 
+
 # Paths
 bin
+build
+doxygen
+out
+include
+lib
+LICENSE.APACHE
+LICENSE.MIT
