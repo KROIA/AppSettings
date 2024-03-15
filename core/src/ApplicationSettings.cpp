@@ -92,6 +92,12 @@ namespace AppSettings
 		emit saveFinished(success);
 		return success;
 	}
+	QJsonObject ApplicationSettings::saveToJson() const
+	{
+		QJsonObject settings;
+		save_internal(settings);
+		return settings;
+	}
 	bool ApplicationSettings::load()
 	{
 		emit loadStarted();
@@ -125,6 +131,13 @@ namespace AppSettings
 		emit loadFinished(success);
 		return success;
 	}
+	bool ApplicationSettings::loadFromJson(const QJsonObject& reader)
+	{
+		emit loadStarted();
+		bool success = read_internal(reader);
+		emit loadFinished(success);
+		return success;
+	}
 
 	const SettingsGroup* ApplicationSettings::getGroup(const QString& name) const
 	{
@@ -150,6 +163,28 @@ namespace AppSettings
 	void ApplicationSettings::addGroup(SettingsGroup& group)
 	{
 		m_groups.push_back(&group);
+	}
+
+	QString ApplicationSettings::toString() const
+	{
+		QString str = "{ " + m_name + "\n";
+		for (size_t i = 0; i < m_groups.size(); ++i)
+		{
+			str += m_groups[i]->toString_internal(4) + "\n";
+		}
+		str += "}\n";
+		return str;
+	}
+	QDebug operator<<(QDebug debug, const ApplicationSettings& settings)
+	{
+		debug.nospace() << settings.toString();
+		return debug;
+	}
+
+	std::ostream& operator<<(std::ostream& stream, const ApplicationSettings& settings)
+	{
+		stream << settings.toString().toStdString();
+		return stream;
 	}
 
 

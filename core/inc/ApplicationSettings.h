@@ -67,10 +67,22 @@ namespace AppSettings
 		bool save() const;
 
 		/// <summary>
+		/// Saves the settings to the filesystem
+		/// </summary>
+		/// <returns>A QJsonObject containing the settings data</returns>
+		QJsonObject saveToJson() const;
+
+		/// <summary>
 		/// Loads the settings from the filesystem
 		/// </summary>
 		/// <returns>True, if the file was loaded successfully</returns>
 		bool load();
+
+		/// <summary>
+		/// Loads the settings from the QJsonObject
+		/// </summary>
+		/// <param name="reader">The QJsonObject to load the settings from</param>
+		bool loadFromJson(const QJsonObject& reader);
 
 		/// <summary>
 		/// Gets the group with the given name.
@@ -86,6 +98,43 @@ namespace AppSettings
 		/// <returns>The group with the given name or nullptr if it does not exist</returns>
 		const SettingsGroup* getGroup(size_t index) const;
 
+		/// <summary>
+		/// Serializes the settings to a string with the format:
+		/// "{ name
+		///     {  group1
+		///			[0] name1 = value1
+		///			[1] name2 = value2
+		///     }
+		///     {  group2
+		///			[0] name1 = value1
+		///			[1] name2 = value2
+		///     }
+		///  }"
+		/// </summary>
+		/// <returns>The serialized settins</returns>
+		QString toString() const;
+
+		/// <summary>
+		/// Prints the group to the QT-debug console in the same form as this->toString()
+		/// Usage:
+		///     Setting mySetting();
+		///     qDebug() << mySetting;
+		/// </summary>
+		/// <param name="debug"></param>
+		/// <param name="settings"></param>
+		/// <returns></returns>
+		friend QDebug operator<<(QDebug debug, const ApplicationSettings& settings);
+
+		/// <summary>
+		/// Prints the group to the std::ostream in the same form as this->toString()
+		/// Usage:
+		/// Setting mySetting();
+		/// std::cout << mySetting;
+		/// </summary>
+		/// <param name="stream"></param>
+		/// <param name="settings"></param>
+		/// <returns></returns>
+		friend std::ostream& operator<<(std::ostream& stream, const ApplicationSettings& settings);
 	signals:
 
 		/// <summary>
@@ -121,6 +170,8 @@ namespace AppSettings
 		/// </summary>
 		/// <param name="success">True, if the loading was successful, otherwise false</param>
 		void loadFinished(bool success) const;
+
+		
 
 	protected:
 		/// <summary>

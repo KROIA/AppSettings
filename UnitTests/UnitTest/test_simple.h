@@ -183,6 +183,7 @@ private:
 		TEST_ASSERT(settings2.m_group2.m_testSetting.getValue() == "Peter");
 		TEST_ASSERT(settings2.m_group2.m_testSetting.getName() == "Name");
 
+		std::cout << settings2;
 		TEST_END;
 	}
 

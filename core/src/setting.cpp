@@ -76,12 +76,17 @@ const std::pair<QString,QVariant> &Setting::getPair() const
 
 QString Setting::toString() const
 {
-    return "{ "+m_parameter.first+" = "+m_parameter.second.toString()+" }";
+    return m_parameter.first+" = "+m_parameter.second.toString();
 }
 QDebug operator<<(QDebug debug, const Setting &setting)
 {
     debug.nospace() << setting.toString();
     return debug;
+}
+std::ostream& operator<<(std::ostream& stream, const Setting& setting)
+{
+    stream << setting.toString().toStdString();
+	return stream;
 }
 
 void Setting::save(QJsonObject& settings) const

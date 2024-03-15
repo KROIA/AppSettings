@@ -80,6 +80,42 @@ namespace AppSettings
 		/// <returns>The setting with the given name or nullptr if it does not exist</returns>
 		const Setting* getSetting(size_t index) const;
 
+		/// <summary>
+		/// Serializes the group to a string with the format:
+		/// "{ name
+		///		[0] name1 = value1
+		///		[1] name2 = value2
+		///     {  name
+		///			[0] name1 = value1
+		///			[1] name2 = value2
+		///     }
+		///  }"
+		/// </summary>
+		/// <returns>The serialized settins</returns>
+		QString toString() const;
+
+		/// <summary>
+		/// Prints the group to the QT-debug console in the same form as this->toString()
+		/// Usage:
+		///     Setting mySetting();
+		///     qDebug() << mySetting;
+		/// </summary>
+		/// <param name="debug"></param>
+		/// <param name="group"></param>
+		/// <returns></returns>
+		friend QDebug operator<<(QDebug debug, const SettingsGroup& group);
+
+		/// <summary>
+		/// Prints the group to the std::ostream in the same form as this->toString()
+		/// Usage:
+		/// Setting mySetting();
+		/// std::cout << mySetting;
+		/// </summary>
+		/// <param name="stream"></param>
+		/// <param name="group"></param>
+		/// <returns></returns>
+		friend std::ostream& operator<<(std::ostream& stream, const SettingsGroup& group);
+
 	signals:
 		/// <summary>
 		/// Signal emitted when the name of the settings group is changed
@@ -119,6 +155,8 @@ namespace AppSettings
 		/// </summary>
 		/// <returns>A string containing the name and _Group: name_Group</returns>
 		QString getGroupKey() const;
+
+		QString toString_internal(int tabs) const;
 
 		QString m_name;
 		std::vector<Setting*> m_settings;

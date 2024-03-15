@@ -5,6 +5,7 @@
 #include <QObject>
 #include <QVariant>
 #include <utility>
+#include <iostream>
 
 
 namespace AppSettings
@@ -103,7 +104,7 @@ namespace AppSettings
 
             /// <summary>
             /// Serializes the setting to a string with the format:
-            /// "{ name = value }"
+            /// "name = value"
             /// </summary>
             /// <returns>The serialized name-value pair</returns>
             QString toString() const;
@@ -118,6 +119,17 @@ namespace AppSettings
             /// <param name="setting"></param>
             /// <returns></returns>
             friend QDebug operator<<(QDebug debug, const Setting &setting);
+
+            /// <summary>
+            /// Prints the setting to the std::ostream in the same form as this->toString()
+            /// Usage:
+            /// Setting mySetting();
+            /// std::cout << mySetting;
+            /// </summary>
+            /// <param name="stream"></param>
+            /// <param name="setting"></param>
+            /// <returns></returns>
+            friend std::ostream& operator<<(std::ostream& stream, const Setting &setting);
 
         signals:
 

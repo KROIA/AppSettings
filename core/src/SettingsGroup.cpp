@@ -71,6 +71,37 @@ namespace AppSettings
 		return nullptr;
 	}
 
+	QString SettingsGroup::toString() const
+	{
+		return toString_internal(0)+"\n";
+	}
+	QString SettingsGroup::toString_internal(int tabs) const
+	{
+		QString str = QString(tabs, ' ')+"{ " + m_name + "\n";
+		tabs += 4;
+		for (size_t i = 0; i < m_settings.size(); ++i)
+		{
+			str += QString(tabs,' ') + "[" + QString::number(i) + "] " + m_settings[i]->toString() + "\n";
+		}
+		for (size_t i = 0; i < m_groups.size(); ++i)
+		{
+			str += m_groups[i]->toString_internal(tabs) + "\n";
+		}
+		str += QString(tabs-4, ' ') + "}";
+		return str;
+	}
+
+	QDebug operator<<(QDebug debug, const SettingsGroup& setting)
+	{
+		debug.nospace() << setting.toString();
+		return debug;
+	}
+	std::ostream& operator<<(std::ostream& stream, const SettingsGroup& setting)
+	{
+		stream << setting.toString().toStdString();
+		return stream;
+	}
+
 
 	void SettingsGroup::addSetting(Setting& setting)
 	{

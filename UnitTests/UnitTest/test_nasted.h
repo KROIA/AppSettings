@@ -219,6 +219,8 @@ private:
 		const AppSettings::Setting* const peterSetting = settings2.m_group2.getSetting("Name");
 		TEST_ASSERT(peterSetting != nullptr);
 
+		std::cout << settings2.m_group2;
+
 		TEST_END;
 	}
 
