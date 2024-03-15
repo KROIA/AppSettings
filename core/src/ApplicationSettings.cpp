@@ -126,6 +126,27 @@ namespace AppSettings
 		return success;
 	}
 
+	const SettingsGroup* ApplicationSettings::getGroup(const QString& name) const
+	{
+		for (size_t i = 0; i < m_groups.size(); ++i)
+		{
+			if (m_groups[i]->getName() == name)
+			{
+				return m_groups[i];
+			}
+		}
+		return nullptr;
+	}
+
+	const SettingsGroup* ApplicationSettings::getGroup(size_t index) const
+	{
+		if (index < m_groups.size())
+		{
+			return m_groups[index];
+		}
+		return nullptr;
+	}
+
 	void ApplicationSettings::addGroup(SettingsGroup& group)
 	{
 		m_groups.push_back(&group);

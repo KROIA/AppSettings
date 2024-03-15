@@ -72,6 +72,20 @@ namespace AppSettings
 		/// <returns>True, if the file was loaded successfully</returns>
 		bool load();
 
+		/// <summary>
+		/// Gets the group with the given name.
+		/// </summary>
+		/// <param name="name">Name of the group</param>
+		/// <returns>The group with the given name or nullptr if it does not exist</returns>
+		const SettingsGroup* getGroup(const QString& name) const;
+
+		/// <summary>
+		/// Gets the group at the given index.
+		/// </summary>
+		/// <param name="index">Index of the group</param>
+		/// <returns>The group with the given name or nullptr if it does not exist</returns>
+		const SettingsGroup* getGroup(size_t index) const;
+
 	signals:
 
 		/// <summary>
