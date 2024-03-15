@@ -9,6 +9,6 @@ namespace AppSettings
     {
         public:
             virtual void save(QJsonObject &settings) const = 0;
-            virtual bool read(const QJsonObject &reader) = 0;
+            virtual bool load(const QJsonObject &reader) = 0;
     };
 }

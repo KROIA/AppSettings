@@ -9,156 +9,162 @@
 
 namespace AppSettings
 {
-
-    /**
-     * \author  Alex Krieg
-     * \version 00.01.00
-     * \date    21.11.2023
-     *
-     * \brief This class is used to store a name with a value.
-     *
-     */
+    class SettingsGroup;
+    /// <summary>
+    /// This class is a simple container for a setting.
+    /// It contains a name and a value.
+    /// The name is a QString and the value is a QVariant.
+    /// </summary>
     class APP_SETTINGS_EXPORT Setting: public QObject, public IJsonSerializable
     {
+        friend SettingsGroup;
             Q_OBJECT
-
         public:
 
-            /**
-             * \brief Constructor
-             */
             Setting();
-
-            /**
-             * \brief Copy constructor
-             * \param other, The other object from which will be copied
-             */
             Setting(const Setting &other);
 
-            /**
-             * \brief Constructor
-             * \param name,  The name of the setting
-             * \param value, The value of the parameter, can by any QVariant compatible type
-             */
+            /// <summary>
+            /// Constructor
+            /// </summary>
+            /// <param name="name">The name of the setting</param>
+            /// <param name="value">The value of the parameter, can by any QVariant compatible type</param>
             Setting(const QString &name, const QVariant &value);
 
-            /**
-             * \brief Constructor
-             * \param setting,  a pair of name and value
-             */
+            /// <summary>
+            /// Constructor
+            /// </summary>
+            /// <param name="setting">a pair of name and value</param>
             Setting(const std::pair<QString,QVariant> &setting);
 
             virtual ~Setting();
 
-            /**
-             * @brief operator ==
-             * @param other parameter to compare the value to this value
-             * @return true if both setting values are equal. Not comparing the name of the setting
-             */
+            /// <summary>
+            /// operator ==
+            /// </summary>
+            /// <param name="other">setting to compare with</param>
+            /// <returns>True, if both setting values are equal. Not comparing the name of the setting</returns>
             bool operator==(const Setting& other);
 
-            /**
-             * @see operator==()
-             */
+            /// <summary>
+            /// operator ==
+            /// </summary>
+            /// <param name="otherValue">value to compare with</param>
+            /// <returns>True, if both setting values are equal</returns>
             bool operator==(const QVariant& otherValue);
 
-            /**
-             * @brief operator !=
-             * @param other parameter to compare the value to this value
-             * @return true if both setting values are not equal. Not comparing the name of the setting
-             */
+            /// <summary>
+            /// operator ==
+            /// </summary>
+            /// <param name="otherValue">setting to compare with</param>
+            /// <returns>True, if both setting values are not equal. Not comparing the name of the setting</returns>
             bool operator!=(const Setting& other);
 
-            /**
-             * @see operator!=()
-             */
+            /// <summary>
+            /// operator ==
+            /// </summary>
+            /// <param name="otherValue">value to compare with</param>
+            /// <returns>True, if both setting values are not equal</returns>
             bool operator!=(const QVariant& otherValue);
 
-            /**
-             * \brief assignement operator
-             * \param other,  Will copy <other> to <this>
-             *                Name and value will be replaced by <other>'s name and value
-             */
-            const Setting &operator=(const Setting &other);
+            /// <summary>
+            /// Assignement operator
+            /// Name and value will be replaced by other's name and value
+            /// </summary>
+            /// <param name="other">Copies the value from the other setting to this setting</param>
+            /// <returns>returns a reference to this</returns>
+            Setting &operator=(const Setting &other);
 
-            /**
-             * \brief assignement operator
-             * \param value,  Will assign <value> to this SettingGroup value
-             */
-            const Setting &operator=(const QVariant &value);
+            /// <summary>
+            /// Assignement operator
+            /// Value will be replaced by value's name and value
+            /// </summary>
+            /// <param name="value">Copies the value to this setting</param>
+            /// <returns>returns a reference to this</returns>
+            Setting &operator=(const QVariant &value);
 
-            /**
-             * \brief getValue
-             * \return returns the value of the setting as a QVariant
-             */
+            /// <summary>
+            /// Gets the value of the setting
+            /// </summary>
+            /// <returns>The value of the setting</returns>
             const QVariant &getValue() const;
 
-            /**
-             * \brief getName
-             * \return returns the value of the setting as a QVariant
-             */
+            /// <summary>
+            /// Gets the name of the setting
+            /// </summary>
+            /// <returns>The name of the setting</returns>
             const QString &getName() const;
 
-            /**
-             * \brief getPair
-             * \return returns the setting as a pair object
-             */
+            /// <summary>
+            /// Gets the setting as a pair object
+            /// </summary>
+            /// <returns>the setting as a pair object</returns>
             const std::pair<QString,QVariant> &getPair() const;
 
-
-            /**
-             * \brief toString
-             * \return return the setting as a string in form of:
-             *         "{ <name> = <value> }";
-             */
+            /// <summary>
+            /// Serializes the setting to a string with the format:
+            /// "{ name = value }"
+            /// </summary>
+            /// <returns>The serialized name-value pair</returns>
             QString toString() const;
 
-            /**
-             * \brief debug operator
-             *        Prints the setting to the QT-debug console in the same form as this->toString()
-             * \see toString()
-             *        Usage:
-             *        Setting mySetting();
-             *        qDebug() << mySetting;
-             */
+            /// <summary>
+            /// Prints the setting to the QT-debug console in the same form as this->toString()
+            /// Usage:
+            ///     Setting mySetting();
+            ///     qDebug() << mySetting;
+            /// </summary>
+            /// <param name="debug"></param>
+            /// <param name="setting"></param>
+            /// <returns></returns>
             friend QDebug operator<<(QDebug debug, const Setting &setting);
-
-
-
-            void save(QJsonObject& settings) const override;
-            bool read(const QJsonObject& reader) override;
 
         signals:
 
-            /**
-             * \brief valueChanged
-             * \details Will be emitted if the setting value has been changed
-             */
+            /// <summary>
+            /// Qt signal that will be emitted if the setting value has been changed
+            /// </summary>
+            /// <param name="value">The new value of this setting</param>
             void valueChanged(const QVariant &value);
 
-            /**
-             * \brief nameChanged
-             * \details Will be emitted if the setting name has been changed
-             */
+            /// <summary>
+            /// Qt signal that will be emitted if the setting name has been changed
+            /// </summary>
+            /// <param name="name">The new name of this setting</param>
             void nameChanged(const QString &name);
 
         public slots:
 
-            /**
-             * \brief setValue
-             * \details Will set the value of the setting
-             * \param value, The value of the parameter, can by any QVariant compatible type
-             */
+            /// <summary>
+            /// Sets the value of the setting
+            /// </summary>
+            /// <param name="value">The new value of this setting</param>
             void setValue(const QVariant &value);
 
-            /**
-             * \brief setName
-             * \details Will set the name of the setting
-             * \param name,  The name of the setting
-             */
+            /// <summary>
+            /// Sets the name of the setting
+            /// </summary>
+            /// <param name="name">The new name of this setting</param>
             void setName(const QString &name);
 
         protected:
+
+            /// <summary>
+            /// Saves the setting to a QJsonObject
+            /// </summary>
+            /// <param name="settings">The QJsonObject to save the setting to</param>
+            void save(QJsonObject& settings) const override;
+
+            /// <summary>
+            /// Reads the setting from a QJsonObject
+            /// </summary>
+            /// <param name="reader">The QJsonObject to read the setting from</param>
+            /// <returns>True, if the setting could be read</returns>
+            /// <returns>False, if the setting could not be read</returns>
+            bool load(const QJsonObject& reader) override;
+
+        private:
+             
 
 
             std::pair<QString,QVariant> m_parameter;

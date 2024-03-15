@@ -70,10 +70,10 @@ private:
 		ThisAppSettings settings;
 		
 		TEST_ASSERT(settings.save());
-		TEST_ASSERT(settings.read());
+		TEST_ASSERT(settings.load());
 
 		ThisAppSettings settings2;
-		TEST_ASSERT(settings2.read());
+		TEST_ASSERT(settings2.load());
 		TEST_ASSERT(settings2.m_group1.m_testSetting.getValue() == 0);
 		TEST_ASSERT(settings2.m_group1.m_testSetting.getName() == "TestValue");
 		TEST_ASSERT(settings2.m_group2.m_testSetting.getValue() == "Peter");
@@ -143,7 +143,7 @@ private:
 		TEST_ASSERT(signalWatcher1.m_valueChanged == false);
 		signalWatcher1.m_valueChanged = false;
 
-		TEST_ASSERT(settings.read());
+		TEST_ASSERT(settings.load());
 
 		QCoreApplication::processEvents();
 		TEST_ASSERT(signalWatcher1.m_nameChanged == false);
@@ -170,7 +170,7 @@ private:
 		TEST_ASSERT(signalWatcher2.m_valueChanged == false);
 		signalWatcher2.m_valueChanged = false;
 
-		TEST_ASSERT(settings2.read());
+		TEST_ASSERT(settings2.load());
 
 		QCoreApplication::processEvents();
 		TEST_ASSERT(signalWatcher2.m_nameChanged == false);

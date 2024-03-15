@@ -70,6 +70,7 @@ private:
 				addSetting(m_testSetting1);
 				addSetting(m_testSetting2);
 				addSetting(m_testSetting3);
+				addSetting(m_testSetting4);
 				addGroup(m_group0);
 				addGroup(m_group1);
 			}
@@ -78,6 +79,7 @@ private:
 			AppSettings::Setting m_testSetting1 = AppSettings::Setting("Name2", "Simon");
 			AppSettings::Setting m_testSetting2 = AppSettings::Setting("Name3", "Kurt");
 			AppSettings::Setting m_testSetting3 = AppSettings::Setting("Name4", "Hans");
+			AppSettings::Setting m_testSetting4 = AppSettings::Setting("Text", "Das ist ein Text mit mehreren\nZeilen");
 			Group0 m_group0;
 			Group1 m_group1;
 		};
@@ -92,21 +94,22 @@ private:
 
 				addGroup(m_group2);
 			}
-
+				
 			Group2 m_group2;
 		};
 
 		ThisAppSettings settings;
 		
 		TEST_ASSERT(settings.save());
-		TEST_ASSERT(settings.read());
+		TEST_ASSERT(settings.load());
 
 		ThisAppSettings settings2;
-		TEST_ASSERT(settings2.read());
+		TEST_ASSERT(settings2.load());
 		TEST_ASSERT(settings2.m_group2.m_group1.m_testSetting0.getValue() == 0);
 		TEST_ASSERT(settings2.m_group2.m_group1.m_testSetting0.getName() == "TestValue0");
 		TEST_ASSERT(settings2.m_group2.m_testSetting0.getValue() == "Peter");
 		TEST_ASSERT(settings2.m_group2.m_testSetting0.getName() == "Name1");
+		TEST_ASSERT(settings2.m_group2.m_testSetting4.getValue() == "Das ist ein Text mit mehreren\nZeilen");
 
 		TEST_END;
 	}
@@ -173,7 +176,7 @@ private:
 		TEST_ASSERT(signalWatcher1.m_valueChanged == false);
 		signalWatcher1.m_valueChanged = false;
 
-		TEST_ASSERT(settings.read());
+		TEST_ASSERT(settings.load());
 
 		QCoreApplication::processEvents();
 		TEST_ASSERT(signalWatcher1.m_nameChanged == false);
@@ -200,7 +203,7 @@ private:
 		TEST_ASSERT(signalWatcher2.m_valueChanged == false);
 		signalWatcher2.m_valueChanged = false;
 
-		TEST_ASSERT(settings2.read());
+		TEST_ASSERT(settings2.load());
 
 		QCoreApplication::processEvents();
 		TEST_ASSERT(signalWatcher2.m_nameChanged == false);
@@ -212,6 +215,9 @@ private:
 		TEST_ASSERT(settings2.m_group2.m_group1.m_testSetting.getName() == "TestValue");
 		TEST_ASSERT(settings2.m_group2.m_testSetting.getValue() == "Peter");
 		TEST_ASSERT(settings2.m_group2.m_testSetting.getName() == "Name");
+
+		const AppSettings::Setting* const peterSetting = settings2.m_group2.getSetting("Name");
+		TEST_ASSERT(peterSetting != nullptr);
 
 		TEST_END;
 	}

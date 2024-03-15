@@ -50,13 +50,13 @@ bool Setting::operator!=(const QVariant& otherValue)
     return false;
 }
 
-const Setting &Setting::operator=(const Setting &other)
+Setting &Setting::operator=(const Setting &other)
 {
     setName(other.m_parameter.first);
     setValue(other.m_parameter.second);
     return *this;
 }
-const Setting &Setting::operator=(const QVariant &value)
+Setting &Setting::operator=(const QVariant &value)
 {
     setValue(value);
     return *this;
@@ -88,7 +88,7 @@ void Setting::save(QJsonObject& settings) const
 {
     settings[m_parameter.first] = QJsonValue::fromVariant(m_parameter.second);
 }
-bool Setting::read(const QJsonObject& reader) 
+bool Setting::load(const QJsonObject& reader)
 {
     if (reader.find(m_parameter.first) == reader.end())
     {

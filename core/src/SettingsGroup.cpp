@@ -3,7 +3,9 @@
 namespace AppSettings
 {
 	SettingsGroup::SettingsGroup(const QString& name)
-		: m_name(name)
+		: QObject()
+		, IJsonSerializable()
+		, m_name(name)
 	{
 		m_settings.reserve(50);
 	}
@@ -15,10 +17,68 @@ namespace AppSettings
 	void SettingsGroup::setName(const QString& name)
 	{
 		m_name = name;
+		emit nameChanged(m_name);
 	}
 	const QString& SettingsGroup::getName() const
 	{
 		return m_name;
+	}
+	size_t SettingsGroup::getSettingCount() const
+	{
+		return m_settings.size();
+	}
+	size_t SettingsGroup::getGroupCount() const
+	{
+		return m_groups.size();
+	}
+
+	const SettingsGroup* SettingsGroup::getGroup(const QString& name) const
+	{
+		for (size_t i = 0; i < m_groups.size(); ++i)
+		{
+			if (m_groups[i]->getName() == name)
+			{
+				return m_groups[i];
+			}
+		}
+		return nullptr;
+	}
+	const SettingsGroup* SettingsGroup::getGroup(size_t index) const
+	{
+		if (index < m_groups.size())
+		{
+			return m_groups[index];
+		}
+		return nullptr;
+	}
+	const Setting* SettingsGroup::getSetting(const QString& name) const
+	{
+		for (size_t i = 0; i < m_settings.size(); ++i)
+		{
+			if (m_settings[i]->getName() == name)
+			{
+				return m_settings[i];
+			}
+		}
+		return nullptr;
+	}
+	const Setting* SettingsGroup::getSetting(size_t index) const
+	{
+		if (index < m_settings.size())
+		{
+			return m_settings[index];
+		}
+		return nullptr;
+	}
+
+
+	void SettingsGroup::addSetting(Setting& setting)
+	{
+		m_settings.push_back(&setting);
+	}
+	void SettingsGroup::addGroup(SettingsGroup& group)
+	{
+		m_groups.push_back(&group);
 	}
 
 	void SettingsGroup::save(QJsonObject& settings) const
@@ -28,19 +88,14 @@ namespace AppSettings
 		{
 			m_settings[i]->save(group);
 		}
-		
 
-		
 		for (size_t i = 0; i < m_groups.size(); ++i)
 		{
-			//QJsonObject subGroup;
 			m_groups[i]->save(group);
-			//group[m_groups[i]->m_name+"Group"] = std::move(subGroup);
 		}
 		settings[getGroupKey()] = std::move(group);
-		
 	}
-	bool SettingsGroup::read(const QJsonObject& reader)
+	bool SettingsGroup::load(const QJsonObject& reader)
 	{
 		if (!reader.contains(getGroupKey()))
 		{
@@ -51,7 +106,7 @@ namespace AppSettings
 		bool success = true;
 		for (size_t i = 0; i < m_settings.size(); ++i)
 		{
-			if (!m_settings[i]->read(group))
+			if (!m_settings[i]->load(group))
 			{
 				AS_CONSOLE_FUNCTION("Failed to read Setting with name: \"" << m_settings[i]->getName().toStdString() << "\"");
 				success = false;
@@ -59,19 +114,9 @@ namespace AppSettings
 		}
 		for (size_t i = 0; i < m_groups.size(); ++i)
 		{
-			//QJsonObject subGroup = group[m_groups[i]->m_name + "Group"].toObject();
-			success &= m_groups[i]->read(group);
+			success &= m_groups[i]->load(group);
 		}
 		return success;
-	}
-
-	void SettingsGroup::addSetting(Setting& setting)
-	{
-		m_settings.push_back(&setting);
-	}
-	void SettingsGroup::addGroup(SettingsGroup& group)
-	{
-		m_groups.push_back(&group);
 	}
 
 	QString SettingsGroup::getGroupKey() const

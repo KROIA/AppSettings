@@ -25,10 +25,12 @@ namespace AppSettings
 	void ApplicationSettings::setName(const QString& name)
 	{
 		m_name = name;
+		emit nameChanged(m_name);
 	}
 	void ApplicationSettings::setPath(const QString& path)
 	{
 		m_path = path;
+		emit pathChanged(m_path);
 	}
 
 	const QString& ApplicationSettings::getName() const
@@ -46,6 +48,8 @@ namespace AppSettings
 
 	bool ApplicationSettings::save() const
 	{
+		emit saveStarted();
+		bool success = true;
 		// Serialize a QJsonObject with all the settings
 		QJsonObject settings;
 		save_internal(settings);
@@ -58,39 +62,68 @@ namespace AppSettings
 			if (!dir2.mkpath(m_path))
 			{
 				AS_CONSOLE_FUNCTION("Failed to create directory: \"" << m_path.toStdString() << "\"");
-				return false;
+				success = false;
+				goto exit;
 			}
 		}
 
 		// Write the QJsonObject to a file
-		QString filePath = getFilePath();
-		QFile file(filePath);
-		if (!file.open(QIODevice::WriteOnly))
 		{
-			AS_CONSOLE_FUNCTION("Failed to open file: \"" << filePath.toStdString() << "\"");
-			return false;
+			QString filePath = getFilePath();
+			QFile file(filePath);
+			if (!file.open(QIODevice::WriteOnly))
+			{
+				AS_CONSOLE_FUNCTION("Failed to open file: \"" << filePath.toStdString() << "\"");
+				success = false;
+				goto exit;
+			}
+			{
+				QJsonDocument doc(settings);
+				if (file.write(doc.toJson()) == -1)
+				{
+					AS_CONSOLE_FUNCTION("Failed to write to file: \"" << filePath.toStdString() << "\"");
+					success = false;
+				}
+			}
+			file.close();
 		}
-		QJsonDocument doc(settings);
-		file.write(doc.toJson());
-		file.close();
-		return true;
+
+		exit:
+		emit saveFinished(success);
+		return success;
 	}
-	bool ApplicationSettings::read()
+	bool ApplicationSettings::load()
 	{
+		emit loadStarted();
+		bool success = true;
 		// Read the JsonObject from a file
 		QString filePath = getFilePath();
 		QFile file(filePath);
 		if (!file.open(QIODevice::ReadOnly))
 		{
 			AS_CONSOLE_FUNCTION("Failed to open file: \"" << filePath.toStdString() << "\"");
-			return false;
+			success = false;
+			goto exit;
 		}
-		QJsonDocument doc = QJsonDocument::fromJson(file.readAll());
-		file.close();
-		QJsonObject reader = doc.object();
 
-		// Deserialize the QJsonObject
-		return read_internal(reader);
+		{
+			QJsonDocument doc = QJsonDocument::fromJson(file.readAll());
+			file.close();
+			if (!doc.isObject())
+			{
+				AS_CONSOLE_FUNCTION("Json data is not a JsonObject: \"" << filePath.toStdString() << "\"");
+				success = false;
+				goto exit;
+			}
+			QJsonObject reader = doc.object();
+
+			// Deserialize the QJsonObject
+			success &= read_internal(reader);
+		}
+		
+		exit:
+		emit loadFinished(success);
+		return success;
 	}
 
 	void ApplicationSettings::addGroup(SettingsGroup& group)
@@ -111,7 +144,7 @@ namespace AppSettings
 		bool success = true;
 		for (size_t i = 0; i < m_groups.size(); ++i)
 		{
-			if (!m_groups[i]->read(reader))
+			if (!m_groups[i]->load(reader))
 			{
 				AS_CONSOLE_FUNCTION("Failed to read SettingsGroup with name: \"" << m_groups[i]->getName().toStdString() << "\"");
 				success = false;
