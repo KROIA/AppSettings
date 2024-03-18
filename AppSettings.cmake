@@ -13,14 +13,13 @@ FetchContent_Declare(
     GIT_TAG        ${GIT_TAG}
 )
 
-set(AppSettings_NO_SAMPLES True)
-set(AppSettings_NO_UNITTTESTS True)
-set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build AppSettings as static library.")
+set(${LIB_NAME}_NO_EXAMPLES True)
+set(${LIB_NAME}_NO_UNITTTESTS True)
 message("Downloading dependency: ${LIB_NAME} from: ${GIT_REPO} tag: ${GIT_TAG}")
 FetchContent_MakeAvailable(${LIB_NAME})
 
 
 # Add this library to the specific profiles of this project
-list(APPEND DEPENDENCIES_FOR_SHARED_LIB AppSettings_static)
-list(APPEND DEPENDENCIES_FOR_STATIC_LIB AppSettings_static)
-list(APPEND DEPENDENCIES_FOR_STATIC_PROFILE_LIB AppSettings_static_profile) # only use for static profiling profile
+list(APPEND DEPENDENCIES_FOR_SHARED_LIB ${LIB_NAME}_static)
+list(APPEND DEPENDENCIES_FOR_STATIC_LIB ${LIB_NAME}_static)
+list(APPEND DEPENDENCIES_FOR_STATIC_PROFILE_LIB ${LIB_NAME}_static_profile) # only use for static profiling profile
