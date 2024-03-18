@@ -14,7 +14,7 @@ FetchContent_Declare(
 )
 
 set(${LIB_NAME}_NO_EXAMPLES True)
-set(${LIB_NAME}_NO_UNITTTESTS True)
+set(${LIB_NAME}_NO_UNITTESTS True)
 message("Downloading dependency: ${LIB_NAME} from: ${GIT_REPO} tag: ${GIT_TAG}")
 FetchContent_MakeAvailable(${LIB_NAME})
 
