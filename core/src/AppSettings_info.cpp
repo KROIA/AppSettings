@@ -1,4 +1,5 @@
 #include "AppSettings_info.h"
+#include "AppSettings_debug.h"
 
 /// USER_SECTION_START 1
 
@@ -88,6 +89,27 @@ namespace AppSettings
 		return nullptr;
 	}
 #endif
+
+	// Implementation of the Profiler start/stop functions
+	void Profiler::start()
+	{
+#ifdef AS_PROFILING
+		EASY_PROFILER_ENABLE;
+#endif
+	}
+	void Profiler::stop()
+	{
+		stop("profile.prof");
+	}
+	void Profiler::stop(const char* profilerOutputFile)
+	{
+#ifdef AS_PROFILING
+		profiler::dumpBlocksToFile(profilerOutputFile);
+#else
+		(void)profilerOutputFile;
+#endif
+	}
+
 
 /// USER_SECTION_START 4
 
