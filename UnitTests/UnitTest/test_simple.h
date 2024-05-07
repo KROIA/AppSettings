@@ -1,6 +1,6 @@
 #pragma once
 #include "AppSettings.h"
-#include "test.h"
+#include "UnitTest.h"
 #include <QObject>
 #include <QCoreapplication>
 #include "dummySignalReceiver.h"
@@ -8,24 +8,24 @@
 
 
 
-class Test_simple : public Test
+class Test_simple : public UnitTest::Test
 {
 	TEST_CLASS(Test_simple)
 public:
 	Test_simple()
 		: Test("Test_simple")
 	{
-		ADD_TEST(Test_simple::test1);
-		ADD_TEST(Test_simple::test2);
+        ADD_TEST(Test_simple::test1);
+        ADD_TEST(Test_simple::test2);
 
 	}
 	
 private:
 
-	// Tests
-	bool test1(TestResults& results)
+    // Tests
+    TEST_FUNCTION(test1)
 	{
-		TEST_START(results);
+        TEST_START;
 
 		class Group1 : public AppSettings::SettingsGroup
 		{
@@ -78,16 +78,13 @@ private:
 		TEST_ASSERT(settings2.m_group1.m_testSetting.getName() == "TestValue");
 		TEST_ASSERT(settings2.m_group2.m_testSetting.getValue() == "Peter");
 		TEST_ASSERT(settings2.m_group2.m_testSetting.getName() == "Name");
-
-		TEST_END;
 	}
 
 
 
-
-	bool test2(TestResults& results)
+    TEST_FUNCTION(test2)
 	{
-		TEST_START(results);
+        TEST_START;
 
 
 		class Group1 : public AppSettings::SettingsGroup
@@ -184,7 +181,6 @@ private:
 		TEST_ASSERT(settings2.m_group2.m_testSetting.getName() == "Name");
 
 		std::cout << settings2;
-		TEST_END;
 	}
 
 };

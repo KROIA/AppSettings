@@ -1,12 +1,12 @@
 #pragma once
 #include "AppSettings.h"
-#include "test.h"
+#include "UnitTest.h"
 #include <QObject>
 #include <QCoreapplication>
 #include "dummySignalReceiver.h"
 
 
-class Test_nasted : public Test
+class Test_nasted : public UnitTest::Test
 {
 	TEST_CLASS(Test_nasted)
 public:
@@ -20,10 +20,10 @@ public:
 	
 private:
 
-	// Tests
-	bool test1(TestResults& results)
+    // Tests
+    TEST_FUNCTION(test1)
 	{
-		TEST_START(results);
+        TEST_START;
 
 		class Group0 : public AppSettings::SettingsGroup
 		{
@@ -111,15 +111,14 @@ private:
 		TEST_ASSERT(settings2.m_group2.m_testSetting0.getName() == "Name1");
 		TEST_ASSERT(settings2.m_group2.m_testSetting4.getValue() == "Das ist ein Text mit mehreren\nZeilen");
 
-		TEST_END;
 	}
 
 
 
 
-	bool test2(TestResults& results)
+    TEST_FUNCTION(test2)
 	{
-		TEST_START(results);
+        TEST_START;
 
 
 		class Group1 : public AppSettings::SettingsGroup
@@ -220,8 +219,6 @@ private:
 		TEST_ASSERT(peterSetting != nullptr);
 
 		std::cout << settings2.m_group2;
-
-		TEST_END;
 	}
 
 };

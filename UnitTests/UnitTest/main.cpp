@@ -7,10 +7,10 @@ TEST_INSTANTIATE(Test_nasted);
 
 int main(int argc, char** argv)
 {
-	std::cout << "Running "<< Test::getTests().size() << " tests...\n";
-	Test::TestResults results;
-	Test::runAllTests(results);
-	Test::printResults(results);
+    std::cout << "Running "<< UnitTest::Test::getTests().size() << " tests...\n";
+    UnitTest::Test::TestResults results;
+    UnitTest::Test::runAllTests(results);
+    UnitTest::Test::printResults(results);
 
 	return 0;
 }
