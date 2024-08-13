@@ -75,7 +75,7 @@ namespace AppSettings
 		return str;
 	}
 
-	std::vector<QVariant> MapSetting::keys() const
+	std::vector<QVariant> MapSetting::getKeys() const
 	{
 		std::vector<QVariant> keys;
 		for (auto it = m_map.begin(); it != m_map.end(); ++it)
@@ -85,7 +85,7 @@ namespace AppSettings
 		return keys;
 	
 	}
-	std::vector<QVariant> MapSetting::values() const
+	std::vector<QVariant> MapSetting::getValues() const
 	{
 		std::vector<QVariant> values;
 		for (auto it = m_map.begin(); it != m_map.end(); ++it)

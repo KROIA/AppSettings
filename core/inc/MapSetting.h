@@ -37,8 +37,8 @@ namespace AppSettings
 		void clear() { m_map.clear(); }
 		bool contains(const QVariant& key) const { return m_map.find(key) != m_map.end(); }
 		size_t size() const { return m_map.size(); }
-		std::vector<QVariant> keys() const;
-		std::vector<QVariant> values() const;
+		std::vector<QVariant> getKeys() const;
+		std::vector<QVariant> getValues() const;
 
 	protected:
 		void save(QJsonObject& settings) const override;
