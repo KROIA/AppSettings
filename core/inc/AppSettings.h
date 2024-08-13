@@ -12,4 +12,8 @@
 #include "MapSetting.h"
 #include "SettingsGroup.h"
 #include "ApplicationSettings.h"
+
+#include "CustomVariants/Selection.h"
+
+#include "ui/UI_AppSettingsEditor.h"
 /// USER_SECTION_END

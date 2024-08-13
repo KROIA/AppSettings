@@ -111,6 +111,8 @@ private:
 		TEST_ASSERT(settings2.m_group2.m_testSetting0.getName() == "Name1");
 		TEST_ASSERT(settings2.m_group2.m_testSetting4.getValue() == "Das ist ein Text mit mehreren\nZeilen");
 
+
+		
 	}
 
 

@@ -60,8 +60,15 @@ namespace AppSettings
 	{
 		m_name = other.m_name;
 		m_map = other.m_map;
+		m_enableDynamicSizeInEditor = other.m_enableDynamicSizeInEditor;
 		emit valueChanged();
 		return *this;
+	}
+
+	void MapSetting::set(const QVariant& key, const QVariant& value)
+	{ 
+		m_map[key] = value; 
+		emit valueChanged(); 
 	}
 
 	QString MapSetting::toString() const

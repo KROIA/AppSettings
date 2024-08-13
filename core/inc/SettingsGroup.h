@@ -8,6 +8,10 @@
 namespace AppSettings
 {
 	class ApplicationSettings;
+	namespace UI
+	{
+		class UI_AppSettingsEditor;
+	}
 	/// <summary>
 	/// Used to combine multiple settings into a single group.
 	/// It can also contain other groups.
@@ -17,6 +21,7 @@ namespace AppSettings
 	class APP_SETTINGS_EXPORT SettingsGroup : public QObject, public IJsonSerializable
 	{
 		friend ApplicationSettings;
+		friend UI::UI_AppSettingsEditor;
 		Q_OBJECT
 	public:
 		/// <summary>
@@ -65,6 +70,8 @@ namespace AppSettings
 		/// <param name="index">Index of the group</param>
 		/// <returns>The group with the given name or nullptr if it does not exist</returns>
 		const SettingsGroup* getGroup(size_t index) const;
+
+		const std::vector<SettingsGroup*> getGroups() const { return m_groups; }
 		
 		/// <summary>
 		/// Gets the setting with the given name.
@@ -79,6 +86,8 @@ namespace AppSettings
 		/// <param name="index">Index of the setting</param>
 		/// <returns>The setting with the given name or nullptr if it does not exist</returns>
 		const ISetting* getSetting(size_t index) const;
+
+		const std::vector<ISetting*>& getSettings() const { return m_settings; }
 
 		/// <summary>
 		/// Serializes the group to a string with the format:
@@ -157,6 +166,12 @@ namespace AppSettings
 		QString getGroupKey() const;
 
 		QString toString_internal(int tabs) const;
+
+		void addToRootGroups();
+		void removeFromRootGroups();
+
+		static std::vector<SettingsGroup*> &getRootGroups();
+		
 
 		QString m_name;
 		std::vector<ISetting*> m_settings;

@@ -9,6 +9,10 @@
 
 namespace AppSettings
 {
+	/// <summary>
+	/// Settings type which holds a map of key-value pairs.
+	/// Both key and value are of type QVariant.
+	/// </summary>
 	class APP_SETTINGS_EXPORT MapSetting : public ISetting
 	{
 	public:
@@ -23,7 +27,7 @@ namespace AppSettings
 
 		MapSetting& operator=(const MapSetting& other);
 		QVariant operator[](const QVariant& key) const { return m_map.at(key); }
-		void set(const QVariant& key, const QVariant& value) { m_map[key] = value; emit valueChanged(); }
+		void set(const QVariant& key, const QVariant& value);
 
 		void setName(const QString& name) override { m_name = name; }
 
@@ -40,6 +44,9 @@ namespace AppSettings
 		std::vector<QVariant> getKeys() const;
 		std::vector<QVariant> getValues() const;
 
+		bool dynamicSizeInEditorEnabled() const { return m_enableDynamicSizeInEditor; }
+		void setDynamicSizeInEditor(bool enable) { m_enableDynamicSizeInEditor = enable; }
+
 	protected:
 		void save(QJsonObject& settings) const override;
 		bool load(const QJsonObject& settings) override;
@@ -47,5 +54,6 @@ namespace AppSettings
 	private:
 		QString m_name;
 		std::map<QVariant,QVariant> m_map;
+		bool m_enableDynamicSizeInEditor = true;
 	};
 }

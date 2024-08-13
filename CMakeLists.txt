@@ -47,6 +47,7 @@ set_if_not_defined(QT_DEPLOY ON)	            # <AUTO_REPLACED>
 # Needed QT modules                             # <AUTO_REPLACED> 
 set(QT_MODULES
   Core
+  Widgets
 )
 
 # Library file name settings

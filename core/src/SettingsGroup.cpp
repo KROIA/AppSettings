@@ -8,10 +8,11 @@ namespace AppSettings
 		, m_name(name)
 	{
 		m_settings.reserve(50);
+		addToRootGroups();
 	}
 	SettingsGroup::~SettingsGroup()
 	{
-
+		removeFromRootGroups();
 	}
 
 	void SettingsGroup::setName(const QString& name)
@@ -109,6 +110,7 @@ namespace AppSettings
 	}
 	void SettingsGroup::addGroup(SettingsGroup& group)
 	{
+		group.removeFromRootGroups();
 		m_groups.push_back(&group);
 	}
 
@@ -153,6 +155,37 @@ namespace AppSettings
 	QString SettingsGroup::getGroupKey() const
 	{
 		return m_name;
+	}
+
+	 
+	void SettingsGroup::addToRootGroups()
+	{
+		std::vector<SettingsGroup*> &rootGroups = getRootGroups();
+		for(size_t i = 0; i < rootGroups.size(); ++i)
+		{
+			if (rootGroups[i] == this)
+			{
+				return;
+			}
+		}
+		rootGroups.push_back(this);
+	}
+	void SettingsGroup::removeFromRootGroups()
+	{
+		std::vector<SettingsGroup*>& rootGroups = getRootGroups();
+		for (size_t i = 0; i < rootGroups.size(); ++i)
+		{
+			if (rootGroups[i] == this)
+			{
+				rootGroups.erase(rootGroups.begin() + i);
+				return;
+			}
+		}
+	}
+	std::vector<SettingsGroup*>& SettingsGroup::getRootGroups()
+	{
+		static std::vector<SettingsGroup*> rootGroups;
+		return rootGroups;
 	}
 
 }
