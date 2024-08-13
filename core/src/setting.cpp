@@ -4,11 +4,12 @@
 namespace AppSettings
 {
 Setting::Setting()
-    : QObject()
+    : ISetting()
 {
+    m_parameter.first = "Setting";
 }
 Setting::Setting(const Setting &other)
-    : QObject()
+    : ISetting()
 {
     m_parameter = other.m_parameter;
 }
@@ -65,7 +66,7 @@ const QVariant &Setting::getValue() const
 {
     return m_parameter.second;
 }
-const QString &Setting::getName() const
+QString Setting::getName() const
 {
     return m_parameter.first;
 }
@@ -97,8 +98,8 @@ bool Setting::load(const QJsonObject& reader)
 {
     if (reader.find(m_parameter.first) == reader.end())
     {
-        AS_CONSOLE_FUNCTION("Unable to read setting" << m_parameter.first.toStdString()
-		<< " from json object setting not found");
+        AS_CONSOLE_FUNCTION("Unable to read setting: " << m_parameter.first.toStdString()
+		<< ". Setting not found");
 		return false;
 	}
 	else
@@ -112,7 +113,7 @@ void Setting::setValue(const QVariant &value)
 {
     if(m_parameter.second == value) return;
     m_parameter.second = value;
-    emit valueChanged(m_parameter.second);
+    emit valueChanged();
 }
 void Setting::setName(const QString &name)
 {
@@ -124,6 +125,6 @@ void Setting::setName(const QString &name)
         return;
     }
     m_parameter.first = name;
-    emit nameChanged(m_parameter.first);
+    emit nameChanged();
 }
 }

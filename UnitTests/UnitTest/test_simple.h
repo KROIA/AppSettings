@@ -34,9 +34,13 @@ private:
 				: SettingsGroup("Group1")
 			{
 				addSetting(m_testSetting);
+				addSetting(m_listSetting);
+				addSetting(m_mapSetting);
 			}
 
 			AppSettings::Setting m_testSetting = AppSettings::Setting("TestValue", 0);
+			AppSettings::ListSetting m_listSetting = AppSettings::ListSetting("ListSetting", {"Name1", "Name2", "Name3", 5});
+			AppSettings::MapSetting m_mapSetting = AppSettings::MapSetting("MapSetting", { {"Name1", 1}, {"Name2", 2}, {"Name3", 3}, {"Name4", 4}, {5.5, "Value"} });
 		};
 
 		class Group2 : public AppSettings::SettingsGroup
@@ -73,11 +77,34 @@ private:
 		TEST_ASSERT(settings.load());
 
 		ThisAppSettings settings2;
+		settings2.m_group1.m_testSetting.setValue(5);
+		settings2.m_group2.m_testSetting.setValue("Urs");
+		settings2.m_group1.m_listSetting.clear();
+		settings2.m_group1.m_mapSetting.clear();
+
+		TEST_ASSERT(settings2.m_group1.m_listSetting.size() == 0);
+		TEST_ASSERT(settings2.m_group1.m_mapSetting.size() == 0);
+
 		TEST_ASSERT(settings2.load());
+		std::cout << settings2;
 		TEST_ASSERT(settings2.m_group1.m_testSetting.getValue() == 0);
 		TEST_ASSERT(settings2.m_group1.m_testSetting.getName() == "TestValue");
 		TEST_ASSERT(settings2.m_group2.m_testSetting.getValue() == "Peter");
 		TEST_ASSERT(settings2.m_group2.m_testSetting.getName() == "Name");
+
+		TEST_ASSERT(settings2.m_group1.m_listSetting.size() == 4);
+		TEST_ASSERT(settings2.m_group1.m_listSetting[0] == "Name1");
+		TEST_ASSERT(settings2.m_group1.m_listSetting[1] == "Name2");
+		TEST_ASSERT(settings2.m_group1.m_listSetting[2] == "Name3");
+		TEST_ASSERT(settings2.m_group1.m_listSetting[3] == 5);
+
+		TEST_ASSERT(settings2.m_group1.m_mapSetting.size() == 5);
+		TEST_ASSERT(settings2.m_group1.m_mapSetting["Name1"] == 1);
+		TEST_ASSERT(settings2.m_group1.m_mapSetting["Name2"] == 2);
+		TEST_ASSERT(settings2.m_group1.m_mapSetting["Name3"] == 3);
+		TEST_ASSERT(settings2.m_group1.m_mapSetting["Name4"] == 4);
+		TEST_ASSERT(settings2.m_group1.m_mapSetting[5.5] == "Value");
+		
 	}
 
 

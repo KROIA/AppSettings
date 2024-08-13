@@ -1,7 +1,7 @@
 #pragma once
 
 #include "AppSettings_base.h"
-#include "Setting.h"
+#include "ISetting.h"
 #include <vector>
 #include <QObject>
 
@@ -71,14 +71,14 @@ namespace AppSettings
 		/// </summary>
 		/// <param name="name">Name of the setting</param>
 		/// <returns>The setting with the given name or nullptr if it does not exist</returns>
-		const Setting* getSetting(const QString& name) const;
+		const ISetting* getSetting(const QString& name) const;
 
 		/// <summary>
 		/// Gets the setting at the given index.
 		/// </summary>
 		/// <param name="index">Index of the setting</param>
 		/// <returns>The setting with the given name or nullptr if it does not exist</returns>
-		const Setting* getSetting(size_t index) const;
+		const ISetting* getSetting(size_t index) const;
 
 		/// <summary>
 		/// Serializes the group to a string with the format:
@@ -128,7 +128,7 @@ namespace AppSettings
 		/// Adds a setting to the settings group.
 		/// </summary>
 		/// <param name="setting">Setting to add to the settings group</param>
-		void addSetting(Setting& setting);
+		void addSetting(ISetting& setting);
 
 		/// <summary>
 		/// Adds a settings group to the settings group.
@@ -159,7 +159,7 @@ namespace AppSettings
 		QString toString_internal(int tabs) const;
 
 		QString m_name;
-		std::vector<Setting*> m_settings;
+		std::vector<ISetting*> m_settings;
 		std::vector<SettingsGroup*> m_groups;
 	};
 }

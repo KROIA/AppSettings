@@ -2,6 +2,7 @@
 #include <QObject>
 #include <QCoreapplication>
 #include <QVariant>
+#include "Setting.h"
 
 class DummySignalReceiver : public QObject
 {
@@ -17,14 +18,14 @@ public:
 	bool m_valueChanged = false;
 	bool m_nameChanged = false;
 public slots:
-	void onValueChanged(const QVariant& value)
+	void onValueChanged()
 	{
-		m_value = value;
+		m_value = dynamic_cast<AppSettings::ISetting*>(QObject::sender())->toString();
 		m_valueChanged = true;
 	}
-	void onNameChanged(const QString& name)
+	void onNameChanged()
 	{
-		m_name = name;
+		m_name = dynamic_cast<AppSettings::ISetting*>(QObject::sender())->getName();
 		m_nameChanged = true;
 	}
 

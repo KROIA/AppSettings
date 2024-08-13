@@ -8,6 +8,8 @@
 
 /// USER_SECTION_START 2
 #include "Setting.h"
+#include "ListSetting.h"
+#include "MapSetting.h"
 #include "SettingsGroup.h"
 #include "ApplicationSettings.h"
 /// USER_SECTION_END

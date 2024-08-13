@@ -51,7 +51,7 @@ namespace AppSettings
 		}
 		return nullptr;
 	}
-	const Setting* SettingsGroup::getSetting(const QString& name) const
+	const ISetting* SettingsGroup::getSetting(const QString& name) const
 	{
 		for (size_t i = 0; i < m_settings.size(); ++i)
 		{
@@ -62,7 +62,7 @@ namespace AppSettings
 		}
 		return nullptr;
 	}
-	const Setting* SettingsGroup::getSetting(size_t index) const
+	const ISetting* SettingsGroup::getSetting(size_t index) const
 	{
 		if (index < m_settings.size())
 		{
@@ -103,7 +103,7 @@ namespace AppSettings
 	}
 
 
-	void SettingsGroup::addSetting(Setting& setting)
+	void SettingsGroup::addSetting(ISetting& setting)
 	{
 		m_settings.push_back(&setting);
 	}
@@ -152,7 +152,7 @@ namespace AppSettings
 
 	QString SettingsGroup::getGroupKey() const
 	{
-		return m_name + "_Group";
+		return m_name;
 	}
 
 }

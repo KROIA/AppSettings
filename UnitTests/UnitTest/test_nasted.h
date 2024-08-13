@@ -215,7 +215,7 @@ private:
 		TEST_ASSERT(settings2.m_group2.m_testSetting.getValue() == "Peter");
 		TEST_ASSERT(settings2.m_group2.m_testSetting.getName() == "Name");
 
-		const AppSettings::Setting* const peterSetting = settings2.m_group2.getSetting("Name");
+		const AppSettings::ISetting* const peterSetting = settings2.m_group2.getSetting("Name");
 		TEST_ASSERT(peterSetting != nullptr);
 
 		std::cout << settings2.m_group2;

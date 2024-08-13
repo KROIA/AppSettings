@@ -43,7 +43,9 @@ namespace AppSettings
 	}
 	QString ApplicationSettings::getFilePath() const
 	{
-		return m_path + "\\" + m_name + s_fileEnding;
+		if(m_path.size() > 0)
+			return m_path + "\\" + m_name + s_fileEnding;
+		return m_name + s_fileEnding;
 	}
 
 	bool ApplicationSettings::save() const

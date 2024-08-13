@@ -1,11 +1,11 @@
 #pragma once
 
 #include "AppSettings_base.h"
-#include "IJsonSerializable.h"
+#include "ISetting.h"
 #include <QObject>
 #include <QVariant>
 #include <utility>
-#include <iostream>
+
 
 
 namespace AppSettings
@@ -16,10 +16,10 @@ namespace AppSettings
     /// It contains a name and a value.
     /// The name is a QString and the value is a QVariant.
     /// </summary>
-    class APP_SETTINGS_EXPORT Setting: public QObject, public IJsonSerializable
+    class APP_SETTINGS_EXPORT Setting: public ISetting
     {
         friend SettingsGroup;
-            Q_OBJECT
+            
         public:
 
             Setting();
@@ -94,7 +94,7 @@ namespace AppSettings
             /// Gets the name of the setting
             /// </summary>
             /// <returns>The name of the setting</returns>
-            const QString &getName() const;
+            QString getName() const override;
 
             /// <summary>
             /// Gets the setting as a pair object
@@ -107,45 +107,7 @@ namespace AppSettings
             /// "name = value"
             /// </summary>
             /// <returns>The serialized name-value pair</returns>
-            QString toString() const;
-
-            /// <summary>
-            /// Prints the setting to the QT-debug console in the same form as this->toString()
-            /// Usage:
-            ///     Setting mySetting();
-            ///     qDebug() << mySetting;
-            /// </summary>
-            /// <param name="debug"></param>
-            /// <param name="setting"></param>
-            /// <returns></returns>
-            friend QDebug operator<<(QDebug debug, const Setting &setting);
-
-            /// <summary>
-            /// Prints the setting to the std::ostream in the same form as this->toString()
-            /// Usage:
-            /// Setting mySetting();
-            /// std::cout << mySetting;
-            /// </summary>
-            /// <param name="stream"></param>
-            /// <param name="setting"></param>
-            /// <returns></returns>
-            friend std::ostream& operator<<(std::ostream& stream, const Setting &setting);
-
-        signals:
-
-            /// <summary>
-            /// Qt signal that will be emitted if the setting value has been changed
-            /// </summary>
-            /// <param name="value">The new value of this setting</param>
-            void valueChanged(const QVariant &value);
-
-            /// <summary>
-            /// Qt signal that will be emitted if the setting name has been changed
-            /// </summary>
-            /// <param name="name">The new name of this setting</param>
-            void nameChanged(const QString &name);
-
-        public slots:
+            QString toString() const override;
 
             /// <summary>
             /// Sets the value of the setting
@@ -157,7 +119,7 @@ namespace AppSettings
             /// Sets the name of the setting
             /// </summary>
             /// <param name="name">The new name of this setting</param>
-            void setName(const QString &name);
+            void setName(const QString &name) override;
 
         protected:
 
