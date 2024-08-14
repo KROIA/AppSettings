@@ -1,4 +1,5 @@
 #include "ui/UI_AppSettingsEditor.h"
+#include "ui_UI_AppSettingsEditor.h"
 #include "SettingsGroup.h"
 #include "Setting.h"
 
@@ -12,10 +13,11 @@ namespace AppSettings
 	{
 		UI_AppSettingsEditor::UI_AppSettingsEditor(QWidget* parent)
 			: QWidget(parent)
+			, ui(new Ui::UI_AppSettingsEditor)
 		{
-			ui.setupUi(this);
-			m_treeWidget = ui.group_treeWidget;
-			m_scrollArea = ui.scrollArea;
+			ui->setupUi(this);
+			m_treeWidget = ui->group_treeWidget;
+			m_scrollArea = ui->scrollArea;
 
 			QWidget* central = new QWidget;
 			QVBoxLayout* layout = new QVBoxLayout(central);

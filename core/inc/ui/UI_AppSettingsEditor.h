@@ -2,10 +2,14 @@
 
 #include "AppSettings_base.h"
 #include <QWidget>
-#include "ui_UI_AppSettingsEditor.h"
+
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
 #include <QScrollArea>
+
+QT_BEGIN_NAMESPACE
+namespace Ui { class UI_AppSettingsEditor; }
+QT_END_NAMESPACE
 
 namespace AppSettings
 {
@@ -32,7 +36,7 @@ namespace AppSettings
 			void addTreeWidgetRecursive(QTreeWidgetItem* parent, std::vector<SettingsGroup*> groups);
 
 
-			Ui::UI_AppSettingsEditor ui;
+			Ui::UI_AppSettingsEditor *ui;
 			QTreeWidget* m_treeWidget;
 			QScrollArea* m_scrollArea;
 			QWidget* m_spacer = nullptr;
