@@ -67,7 +67,7 @@ namespace AppSettings
                 case QVariant::DateTime:
                 {
                     QDateTimeEdit* dateTimeEdit = new QDateTimeEdit(this);
-                    connect(dateTimeEdit, &QTimeEdit::dateChanged, this, [&] {emit valueChanged(); });
+                    connect(dateTimeEdit, &QTimeEdit::timeChanged, this, [&] {emit valueChanged(); });
                     dateTimeEdit->setDateTime(value.toDateTime());
                     m_layout->addWidget(dateTimeEdit);
                     break;

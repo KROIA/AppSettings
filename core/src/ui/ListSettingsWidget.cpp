@@ -1,17 +1,16 @@
-#include "ui/MapSettingsWidget.h"
+#include "ui/ListSettingsWidget.h"
 #include <QGridLayout>
 #include <QVBoxLayout>
 #include <QVariant>
 #include <QFrame>
 
-#include "DynamicInputWidget.h"
-#include "MapSetting.h"
+#include "ListSetting.h"
 
 namespace AppSettings
 {
 	namespace UI
 	{
-		MapSettingsWidget::MapSettingsWidget(QWidget* parent)
+		ListSettingsWidget::ListSettingsWidget(QWidget* parent)
 			: QWidget(parent)
 		{
 			
@@ -37,12 +36,12 @@ namespace AppSettings
 			
 		}
 
-		MapSettingsWidget::~MapSettingsWidget()
+		ListSettingsWidget::~ListSettingsWidget()
 		{
 
 		}
 
-		void MapSettingsWidget::setSetting(MapSetting* setting)
+		void ListSettingsWidget::setSetting(ListSetting* setting)
 		{
 			m_setting = setting;
 			for (size_t i = 0; i < m_mapWidgets.size(); ++i)
@@ -61,8 +60,8 @@ namespace AppSettings
 				for (const auto& it : map)
 				{
 					MapWidget* pair = new MapWidget(it.first, it.second);
-					connect(pair->key, &DynamicInputWidget::valueChanged, this, &MapSettingsWidget::onKeyChanged);
-					connect(pair->value, &DynamicInputWidget::valueChanged, this, &MapSettingsWidget::onValueChanged);
+					connect(pair->key, &DynamicInputWidget::valueChanged, this, &ListSettingsWidget::onKeyChanged);
+					connect(pair->value, &DynamicInputWidget::valueChanged, this, &ListSettingsWidget::onValueChanged);
 
 					
 					gridLayout->addWidget(pair->key, m_mapWidgets.size(), 0);
@@ -79,7 +78,7 @@ namespace AppSettings
 			}
 		}
 
-		void MapSettingsWidget::saveSetting()
+		void ListSettingsWidget::saveSetting()
 		{
 			if (!m_setting)
 				return;
@@ -93,7 +92,7 @@ namespace AppSettings
 		}
 
 
-		void MapSettingsWidget::onKeyChanged()
+		void ListSettingsWidget::onKeyChanged()
 		{
 			if (!m_setting)
 				return;
@@ -105,7 +104,7 @@ namespace AppSettings
 			}
 			m_hasChanges = (m_setting->getMap() != map);
 		}
-		void MapSettingsWidget::onValueChanged()
+		void ListSettingsWidget::onValueChanged()
 		{
 			if (!m_setting)
 				return;
@@ -121,7 +120,7 @@ namespace AppSettings
 
 
 
-		MapSettingsWidget::MapWidget::MapWidget(QVariant key, QVariant value)
+		ListSettingsWidget::MapWidget::MapWidget(QVariant key, QVariant value)
 		{
 			this->key = new DynamicInputWidget();
 			this->value = new DynamicInputWidget();
@@ -129,7 +128,7 @@ namespace AppSettings
 			this->key->setValue(key);
 			this->value->setValue(value);
 		}
-		MapSettingsWidget::MapWidget::~MapWidget()
+		ListSettingsWidget::MapWidget::~MapWidget()
 		{
 			delete key;
 			delete value;

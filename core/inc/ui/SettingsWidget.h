@@ -6,14 +6,15 @@
 #include <QHBoxLayout>
 
 #include "Setting.h"
-#include "DynamicInputWidget.h"
+
 
 
 namespace AppSettings
 {
+	class DynamicInputWidget;
 	namespace UI
 	{
-		class SettingsWidget : public QWidget
+		class APP_SETTINGS_EXPORT SettingsWidget : public QWidget
 		{
 			Q_OBJECT
 

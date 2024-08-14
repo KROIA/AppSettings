@@ -6,25 +6,24 @@
 
 
 
-
+#include "DynamicInputWidget.h"
 
 
 namespace AppSettings
 {
-	class MapSetting;
+	class ListSetting;
 	namespace UI
 	{
-		class DynamicInputWidget;
-		class APP_SETTINGS_EXPORT MapSettingsWidget : public QWidget
+		class APP_SETTINGS_EXPORT ListSettingsWidget : public QWidget
 		{
 			Q_OBJECT
 
 		public:
-			MapSettingsWidget(QWidget* parent = nullptr);
-			~MapSettingsWidget();
+			ListSettingsWidget(QWidget* parent = nullptr);
+			~ListSettingsWidget();
 
-			void setSetting(MapSetting* setting);
-			MapSetting* getSetting() const{ return m_setting;}
+			void setSetting(ListSetting* setting);
+			ListSetting* getSetting() const{ return m_setting;}
 
 		signals:
 			void valueChanged();
@@ -37,7 +36,7 @@ namespace AppSettings
 			void onValueChanged();
 
 		private:
-			MapSetting* m_setting = nullptr;
+			ListSetting* m_setting = nullptr;
 
 			QLabel *m_nameLabel;
 			QWidget* m_contentWidget;

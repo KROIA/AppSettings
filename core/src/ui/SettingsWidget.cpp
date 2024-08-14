@@ -1,4 +1,5 @@
 #include "ui/SettingsWidget.h"
+#include "DynamicInputWidget.h"
 
 namespace AppSettings
 {
