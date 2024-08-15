@@ -2,6 +2,7 @@
 #include <QFile>
 #include <QDir>
 #include <QJsonDocument>
+#include "Utilities.h"
 
 namespace AppSettings
 {
@@ -11,14 +12,25 @@ namespace AppSettings
 		: m_name(name)
 		, m_path("")
 	{
+		getInstances().push_back(this);
 	}
 	ApplicationSettings::ApplicationSettings(const QString& path, const QString& name)
 		: m_name(name)
 		, m_path(path)
 	{
+		getInstances().push_back(this);
 	}
 	ApplicationSettings::~ApplicationSettings()
 	{
+		auto& instances = getInstances();
+		for (size_t i = 0; i < instances.size(); ++i)
+		{
+			if (instances[i] == this)
+			{
+				instances.erase(instances.begin() + i);
+				break;
+			}
+		}
 	}
 	
 	
@@ -52,6 +64,8 @@ namespace AppSettings
 	{
 		emit saveStarted();
 		bool success = true;
+		QString filePath = getFilePath();
+
 		// Serialize a QJsonObject with all the settings
 		QJsonObject settings;
 		save_internal(settings);
@@ -63,19 +77,23 @@ namespace AppSettings
 			QDir dir2;
 			if (!dir2.mkpath(m_path))
 			{
-				AS_CONSOLE_FUNCTION("Failed to create directory: \"" << m_path.toStdString() << "\"");
+				logger().logError("Failed to create directory: \"" + m_path.toStdString() + "\"");
 				success = false;
 				goto exit;
+			}
+			else
+			{
+				logger().logInfo("Created directory: \"" + m_path.toStdString() + "\"");
 			}
 		}
 
 		// Write the QJsonObject to a file
 		{
-			QString filePath = getFilePath();
+			
 			QFile file(filePath);
 			if (!file.open(QIODevice::WriteOnly))
 			{
-				AS_CONSOLE_FUNCTION("Failed to open file: \"" << filePath.toStdString() << "\"");
+				logger().logError("Failed to open file: \"" + filePath.toStdString() + "\"");
 				success = false;
 				goto exit;
 			}
@@ -83,7 +101,7 @@ namespace AppSettings
 				QJsonDocument doc(settings);
 				if (file.write(doc.toJson()) == -1)
 				{
-					AS_CONSOLE_FUNCTION("Failed to write to file: \"" << filePath.toStdString() << "\"");
+					logger().logError("Failed to write to file: \"" + filePath.toStdString() + "\"");
 					success = false;
 				}
 			}
@@ -92,6 +110,10 @@ namespace AppSettings
 
 		exit:
 		emit saveFinished(success);
+		if(success)
+			logger().logInfo("Settings saved successfully: \"" + m_name.toStdString() + "\" to \""+ filePath.toStdString()+"\"");
+		else
+			logger().logError("Failed to save settings: \"" + m_name.toStdString() + "\" to \""+ filePath.toStdString()+"\"");
 		return success;
 	}
 	QJsonObject ApplicationSettings::saveToJson() const
@@ -103,13 +125,14 @@ namespace AppSettings
 	bool ApplicationSettings::load()
 	{
 		emit loadStarted();
+		
 		bool success = true;
 		// Read the JsonObject from a file
 		QString filePath = getFilePath();
 		QFile file(filePath);
 		if (!file.open(QIODevice::ReadOnly))
 		{
-			AS_CONSOLE_FUNCTION("Failed to open file: \"" << filePath.toStdString() << "\"");
+			logger().logError("Failed to open file: \"" + filePath.toStdString() + "\"");
 			success = false;
 			goto exit;
 		}
@@ -119,7 +142,7 @@ namespace AppSettings
 			file.close();
 			if (!doc.isObject())
 			{
-				AS_CONSOLE_FUNCTION("Json data is not a JsonObject: \"" << filePath.toStdString() << "\"");
+				logger().logError("Json data is not a JsonObject: \"" + filePath.toStdString() + "\"");
 				success = false;
 				goto exit;
 			}
@@ -131,6 +154,10 @@ namespace AppSettings
 		
 		exit:
 		emit loadFinished(success);
+		if(success)
+			logger().logInfo("Settings loaded successfully: \"" + m_name.toStdString() + "\" from \""+filePath.toStdString()+"\"");
+		else
+			logger().logError("Failed to load settings: \"" + m_name.toStdString() + "\" from \"" + filePath.toStdString() + "\"");
 		return success;
 	}
 	bool ApplicationSettings::loadFromJson(const QJsonObject& reader)
@@ -189,6 +216,23 @@ namespace AppSettings
 		return stream;
 	}
 
+	void ApplicationSettings::saveAll()
+	{
+		auto& instances = getInstances();
+		for (size_t i = 0; i < instances.size(); ++i)
+		{
+			instances[i]->save();
+		}
+	}
+	void ApplicationSettings::loadAll()
+	{
+		auto& instances = getInstances();
+		for (size_t i = 0; i < instances.size(); ++i)
+		{
+			instances[i]->load();
+		}
+	}
+
 
 	void ApplicationSettings::save_internal(QJsonObject& settings) const
 	{
@@ -204,10 +248,16 @@ namespace AppSettings
 		{
 			if (!m_groups[i]->load(reader))
 			{
-				AS_CONSOLE_FUNCTION("Failed to read SettingsGroup with name: \"" << m_groups[i]->getName().toStdString() << "\"");
+				logger().logError("Failed to read SettingsGroup with name: \"" + m_groups[i]->getName().toStdString() + "\"");
 				success = false;
 			}
 		}
 		return success;
+	}
+
+	std::vector<ApplicationSettings*>& ApplicationSettings::getInstances()
+	{
+		static std::vector<ApplicationSettings*> instances;
+		return instances;
 	}
 }

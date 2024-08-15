@@ -1,19 +1,22 @@
 #pragma once
 
 #include "AppSettings_base.h"
-#include <QWidget>
+
 #include <QLabel>
 #include <QHBoxLayout>
 
 #include "Setting.h"
-#include "DynamicInputWidget.h"
+#include "ISettingsWidget.h"
+
 
 
 namespace AppSettings
 {
+	
 	namespace UI
 	{
-		class SettingsWidget : public QWidget
+		class DynamicInputWidget;
+		class APP_SETTINGS_EXPORT SettingsWidget : public ISettingsWidget
 		{
 			Q_OBJECT
 
@@ -28,7 +31,7 @@ namespace AppSettings
 			void valueChanged();
 
 		public slots:
-			void saveSetting();
+			void saveSetting() override;
 
 		private slots:
 			void onValueChanged();

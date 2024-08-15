@@ -1,11 +1,12 @@
 #include "ui/SettingsWidget.h"
+#include "ui/DynamicInputWidget.h"
 
 namespace AppSettings
 {
 	namespace UI
 	{
 		SettingsWidget::SettingsWidget(QWidget* parent)
-			: QWidget(parent)
+			: ISettingsWidget(parent)
 		{
 			m_layout = new QHBoxLayout(this);
 			m_layout->setMargin(0);
@@ -38,7 +39,7 @@ namespace AppSettings
 			}
 		}
 
-		void SettingsWidget::saveSetting()
+		void SettingsWidget::saveSetting() 
 		{
 			if (!m_setting)
 				return;

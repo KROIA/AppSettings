@@ -135,6 +135,10 @@ namespace AppSettings
 		/// <param name="settings"></param>
 		/// <returns></returns>
 		friend std::ostream& operator<<(std::ostream& stream, const ApplicationSettings& settings);
+
+
+		static void saveAll();
+		static void loadAll();
 	signals:
 
 		/// <summary>
@@ -183,6 +187,8 @@ namespace AppSettings
 	private:
 		void save_internal(QJsonObject& settings) const;
 		bool read_internal(const QJsonObject& reader);
+
+		static std::vector<ApplicationSettings*> &getInstances();
 
 
 		QString m_name;

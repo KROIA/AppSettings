@@ -60,7 +60,8 @@ namespace AppSettings
 	{
 		m_name = other.m_name;
 		m_map = other.m_map;
-		m_enableDynamicSizeInEditor = other.m_enableDynamicSizeInEditor;
+		m_enableAddButton = other.m_enableAddButton;
+		m_enableRemoveButton = other.m_enableRemoveButton;
 		emit valueChanged();
 		return *this;
 	}
@@ -118,18 +119,19 @@ namespace AppSettings
 	{
 		if (!settings.contains(m_name))
 		{
-			AS_CONSOLE_FUNCTION("Unable to read setting: " << m_name.toStdString()
-				<< ". Setting not found");
+			logger().logError("Unable to read setting: " + m_name.toStdString()
+				+ ". Setting not found");
 			return false;
 		}
 		QJsonValue value = settings[m_name];
 		if (!value.isArray())
 		{
-			AS_CONSOLE_FUNCTION("Unable to read setting: " << m_name.toStdString()
-				<< ". Setting is not an array");
+			logger().logError("Unable to read setting: " + m_name.toStdString()
+				+ ". Setting is not an array");
 			return false;
 		}
 		QJsonArray mapObject = value.toArray();
+		m_map.clear();
 		for (int i = 0; i < mapObject.size(); ++i)
 		{
 			QJsonObject obj = mapObject[i].toObject();

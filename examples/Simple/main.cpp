@@ -18,6 +18,8 @@ public:
 		addSetting(m_testSetting4);
 		addSetting(m_listSetting);
 		addSetting(m_mapSetting);
+		m_listSetting.setAddButtonEnabled(false);
+		m_listSetting.setRemoveButtonEnabled(false);
 	}
 
 	AppSettings::Setting m_testSetting0 = AppSettings::Setting("Value0", 10);
@@ -75,7 +77,7 @@ class ThisAppSettings : public AppSettings::ApplicationSettings
 {
 public:
 	ThisAppSettings()
-		: ApplicationSettings("Test_nasted_test1")
+		: ApplicationSettings("simpleSettings")
 	{
 		setPath("settings");
 
@@ -95,11 +97,19 @@ int main(int argc, char* argv[])
 #ifdef QT_ENABLED
 	QApplication app(argc, argv);
 #endif
+	//Log::UI::QConsoleView* console = new Log::UI::QConsoleView();
+	//console->show();
+	Log::UI::NativeConsoleView* console = new Log::UI::NativeConsoleView();
+
 
 	AppSettings::LibraryInfo::printInfo();
 	ThisAppSettings settings;
+	settings.load();
+	settings.save();
 	AppSettings::UI::UI_AppSettingsEditor* editor = new AppSettings::UI::UI_AppSettingsEditor();
 	editor->show();
+
+	
 
 #ifdef QT_ENABLED
 	return app.exec();

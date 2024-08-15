@@ -48,6 +48,11 @@ namespace AppSettings
 
 		const std::vector<QVariant>& getData() const {	return m_list;	}
 
+		bool isAddButtonEnabled() const { return m_enableAddButton; }
+		void setAddButtonEnabled(bool enabled) { m_enableAddButton = enabled; }
+		bool isRemoveButtonEnabled() const { return m_enableRemoveButton; }
+		void setRemoveButtonEnabled(bool enabled) { m_enableRemoveButton = enabled; }
+
 	protected:
 		void save(QJsonObject &settings) const override;
 		bool load(const QJsonObject &settings) override;
@@ -56,5 +61,9 @@ namespace AppSettings
 
 		QString m_name;
 		std::vector<QVariant> m_list;
+
+		// Flags to enable/disable the add and remove buttons in the UI
+		bool m_enableAddButton = true;
+		bool m_enableRemoveButton = true;
 	};
 }

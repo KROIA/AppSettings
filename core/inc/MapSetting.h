@@ -44,8 +44,10 @@ namespace AppSettings
 		std::vector<QVariant> getKeys() const;
 		std::vector<QVariant> getValues() const;
 
-		bool dynamicSizeInEditorEnabled() const { return m_enableDynamicSizeInEditor; }
-		void setDynamicSizeInEditor(bool enable) { m_enableDynamicSizeInEditor = enable; }
+		bool isAddButtonEnabled() const { return m_enableAddButton; }
+		void setAddButtonEnabled(bool enabled) { m_enableAddButton = enabled; }
+		bool isRemoveButtonEnabled() const { return m_enableRemoveButton; }
+		void setRemoveButtonEnabled(bool enabled) { m_enableRemoveButton = enabled; }
 
 	protected:
 		void save(QJsonObject& settings) const override;
@@ -54,6 +56,9 @@ namespace AppSettings
 	private:
 		QString m_name;
 		std::map<QVariant,QVariant> m_map;
-		bool m_enableDynamicSizeInEditor = true;
+
+		// Flags to enable/disable the add and remove buttons in the UI
+		bool m_enableAddButton = true;
+		bool m_enableRemoveButton = true;
 	};
 }

@@ -1,5 +1,5 @@
 #include "setting.h"
-
+#include "Utilities.h"
 
 namespace AppSettings
 {
@@ -92,19 +92,18 @@ std::ostream& operator<<(std::ostream& stream, const Setting& setting)
 
 void Setting::save(QJsonObject& settings) const
 {
-    settings[m_parameter.first] = QJsonValue::fromVariant(m_parameter.second);
+    settings[m_parameter.first] = variantToJsonValue(m_parameter.second);
 }
 bool Setting::load(const QJsonObject& reader)
 {
     if (reader.find(m_parameter.first) == reader.end())
     {
-        AS_CONSOLE_FUNCTION("Unable to read setting: " << m_parameter.first.toStdString()
-		<< ". Setting not found");
+        logger().logError("Unable to read setting: "+ m_parameter.first.toStdString()+" Setting not found");
 		return false;
 	}
 	else
 	{
-        setValue(reader[m_parameter.first].toVariant());
+        setValue(jsonValueToVariant(reader[m_parameter.first]));
 		return true;
 	}
 }
@@ -120,8 +119,8 @@ void Setting::setName(const QString &name)
     if(m_parameter.first == name) return;
     if(name == "")
     {
-        AS_CONSOLE_FUNCTION("Unable to change name from" << m_parameter.first.toStdString()
-        << " to " << name.toStdString() << "\nnew name is empty");
+        logger().logError("Unable to change name from" + m_parameter.first.toStdString()
+            + " to " + name.toStdString() + "\nnew name is empty");
         return;
     }
     m_parameter.first = name;

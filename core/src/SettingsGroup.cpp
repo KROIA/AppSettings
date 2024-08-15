@@ -1,4 +1,5 @@
 #include "SettingsGroup.h"
+#include "Utilities.h"
 
 namespace AppSettings
 {
@@ -132,7 +133,7 @@ namespace AppSettings
 	{
 		if (!reader.contains(getGroupKey()))
 		{
-			AS_CONSOLE_FUNCTION("No SettingsGroup with name: \"" << m_name.toStdString() << "\" found");
+			logger().logError("No SettingsGroup with name: \"" + m_name.toStdString() + "\" found");
 			return false;
 		}
 		QJsonObject group = reader[getGroupKey()].toObject();
@@ -141,7 +142,7 @@ namespace AppSettings
 		{
 			if (!m_settings[i]->load(group))
 			{
-				AS_CONSOLE_FUNCTION("Failed to read Setting with name: \"" << m_settings[i]->getName().toStdString() << "\"");
+				logger().logError("Failed to read Setting with name: \"" + m_settings[i]->getName().toStdString() + "\"");
 				success = false;
 			}
 		}
