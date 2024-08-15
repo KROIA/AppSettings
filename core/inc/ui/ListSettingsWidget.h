@@ -1,12 +1,13 @@
 #pragma once
 
 #include "AppSettings_base.h"
-#include <QWidget>
 #include <QLabel>
+#include <QPushButton>
 
 
 
 #include "DynamicInputWidget.h"
+#include "ISettingsWidget.h"
 
 
 namespace AppSettings
@@ -14,7 +15,7 @@ namespace AppSettings
 	class ListSetting;
 	namespace UI
 	{
-		class APP_SETTINGS_EXPORT ListSettingsWidget : public QWidget
+		class APP_SETTINGS_EXPORT ListSettingsWidget : public ISettingsWidget
 		{
 			Q_OBJECT
 
@@ -29,29 +30,36 @@ namespace AppSettings
 			void valueChanged();
 
 		public slots:
-			void saveSetting();
+			void saveSetting() override;
 
 		private slots:
-			void onKeyChanged();
 			void onValueChanged();
 
+			void onAddButtonClicked();
+			void onRemoveButtonClicked();
+
+
 		private:
+			void replaceAddButton();
+
 			ListSetting* m_setting = nullptr;
 
 			QLabel *m_nameLabel;
 			QWidget* m_contentWidget;
 			bool m_hasChanges = false;
+			QGridLayout* m_contentGridLayout = nullptr;
+			QPushButton* m_addButton = nullptr;
 			
-			class MapWidget
+			class ListWidget
 			{
 			public:
-				MapWidget(QVariant key, QVariant value);
-				~MapWidget();
+				ListWidget(QVariant value, bool removeButtonEnabled);
+				~ListWidget();
 
-				DynamicInputWidget* key;
 				DynamicInputWidget* value;
+				QPushButton* removeButton = nullptr;
 			};
-			std::vector<MapWidget*> m_mapWidgets;
+			std::vector<ListWidget*> m_listWidgets;
 		};
 	}
 }

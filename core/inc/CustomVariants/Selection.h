@@ -4,6 +4,7 @@
 #include <QStringList>
 #include <QString>
 #include <QVariant>
+#include <QJsonValue>
 
 namespace AppSettings
 {
@@ -32,9 +33,19 @@ namespace AppSettings
 
 		const QStringList& getSelection() const { return m_selection; }
 
+		/// <summary>
+		/// Interface to save the selection to a json file.
+		/// </summary>
+		QJsonValue toJson() const;
 
+		/// <summary>
+		/// Loads the selection from a json file.
+		/// </summary>
+		/// <param name="value"></param>
+		/// <returns>true, of the loading was successfull</returns>
+		bool fromJson(const QJsonValue& value);
 	private:
-		const QStringList m_selection;
+		QStringList m_selection;
 		size_t m_selectedIndex;
 	};
 }

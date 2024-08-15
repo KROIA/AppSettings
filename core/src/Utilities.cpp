@@ -2,6 +2,9 @@
 #include <QJsonArray>
 #include <QJsonObject>
 
+#include "CustomVariants/Selection.h"
+#include "AppSettings_info.h"
+
 
 namespace AppSettings
 {
@@ -44,7 +47,15 @@ namespace AppSettings
 		case QVariant::ULongLong:
 			return QJsonValue(static_cast<double>(var.toULongLong())); // No native support for unsigned long long
 		default:
+		{
+			// Custom types
+			if (var.canConvert<Selection>())
+			{
+				Selection selection = var.value<Selection>();
+				return selection.toJson();
+			}
 			break;
+		}
 		}
 		return QJsonValue(); // Null value for unsupported types
 	}
@@ -66,6 +77,11 @@ namespace AppSettings
 			return QVariant(variantList);
 		}
 		case QJsonValue::Object: {
+			// Check if the Object is a Selection
+			Selection selection;
+			if (selection.fromJson(value))
+				return QVariant::fromValue(selection);
+
 			QVariantMap variantMap;
 			QJsonObject jsonObject = value.toObject();
 			for (auto it = jsonObject.begin(); it != jsonObject.end(); ++it) {
@@ -77,8 +93,17 @@ namespace AppSettings
 		case QJsonValue::Undefined:
 			return QVariant(); // Null QVariant
 		default:
+		{
+			
 			break;
 		}
+		}
 		return QVariant(); // Unsupported types will return null
+	}
+
+	Log::LogObject& logger()
+	{
+		static Log::LogObject logger(LibraryInfo::name);
+		return logger;
 	}
 }

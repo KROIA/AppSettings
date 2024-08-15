@@ -1,5 +1,6 @@
 #include "CustomVariants/Selection.h"
-
+#include <QJsonObject>
+#include <QJsonArray>
 
 namespace AppSettings
 {
@@ -54,6 +55,44 @@ namespace AppSettings
 		for (size_t i = 0; i < m_selection.size(); ++i)
 		{
 			if (m_selection[i] == element)
+			{
+				m_selectedIndex = i;
+				return true;
+			}
+		}
+		return false;
+	}
+
+	QJsonValue Selection::toJson() const
+	{
+		QJsonObject obj;
+		obj["selection"] = QJsonArray::fromStringList(m_selection);
+		obj["selected"] = m_selection[m_selectedIndex];
+		return obj;
+	}
+	bool Selection::fromJson(const QJsonValue& value)
+	{
+		if(!value.isObject())
+			return false;
+		QJsonObject obj = value.toObject();
+		if (!obj.contains("selection") || !obj.contains("selected"))
+			return false;
+		QJsonValue selection = obj["selection"];
+		QJsonValue selected = obj["selected"];
+		if (!selection.isArray() || !selected.isString())
+			return false;
+		QJsonArray array = selection.toArray();
+		m_selection.clear();
+		for(const auto & val : array)
+		{
+			if (!val.isString())
+				return false;
+			m_selection.push_back(val.toString());
+		}
+		QString selectedStr = selected.toString();
+		for (size_t i = 0; i < m_selection.size(); ++i)
+		{
+			if (m_selection[i] == selectedStr)
 			{
 				m_selectedIndex = i;
 				return true;

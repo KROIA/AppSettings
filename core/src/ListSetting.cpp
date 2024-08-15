@@ -74,15 +74,15 @@ namespace AppSettings
 	{
 		if (!settings.contains(m_name))
 		{
-			AS_CONSOLE_FUNCTION("Unable to read setting: " << m_name.toStdString()
-				<< ". Setting not found");
+			logger().logError("Unable to read setting: " + m_name.toStdString()
+				+ ". Setting not found");
 			return false;
 		}
 		QJsonValue value = settings[m_name];
 		if (!value.isArray())
 		{
-			AS_CONSOLE_FUNCTION("Unable to read setting: " << m_name.toStdString()
-				<< ". Setting is not an array");
+			logger().logError("Unable to read setting: " + m_name.toStdString()
+				+ ". Setting is not an array");
 			return false;
 		}
 		QJsonArray list = value.toArray();
