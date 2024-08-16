@@ -20,11 +20,10 @@ namespace AppSettings
 	{
 
 	}
-	MapSetting::MapSetting(const QString& name, const std::map<QVariant, QVariant>& map)
+	MapSetting::MapSetting(const QString& name, const std::vector<std::pair<QVariant, QVariant>>& map)
 		: m_name(name)
-		, m_map(map)
 	{
-
+		setMap(map);
 	}
 
 	bool MapSetting::operator==(const MapSetting& other) const
@@ -37,17 +36,20 @@ namespace AppSettings
 		{
 			return false;
 		}
-		for (auto it = m_map.begin(); it != m_map.end(); ++it)
+		for (auto otherIt = other.m_map.begin(); otherIt != other.m_map.end(); ++otherIt)
 		{
-			auto otherIt = other.m_map.find(it->first);
-			if (otherIt == other.m_map.end())
+			bool found = false;
+			for (auto it = m_map.begin(); it != m_map.end(); ++it)
 			{
-				return false;
+				if (it->first == otherIt->first)
+				{
+					if (it->second != otherIt->second)
+						return false;
+					found = true;
+				}
 			}
-			if (it->second != otherIt->second)
-			{
+			if (!found)
 				return false;
-			}
 		}
 		return true;
 	}
@@ -59,7 +61,15 @@ namespace AppSettings
 	MapSetting& MapSetting::operator=(const MapSetting& other)
 	{
 		m_name = other.m_name;
-		m_map = other.m_map;
+		m_map.clear();
+		m_map.reserve(other.m_map.size());
+		for (size_t i = 0; i < other.m_map.size(); ++i)
+		{
+			if (!contains(other.m_map[i].first))
+			{
+				m_map.push_back(other.m_map[i]);
+			}
+		}
 		m_enableAddButton = other.m_enableAddButton;
 		m_enableRemoveButton = other.m_enableRemoveButton;
 		emit valueChanged();
@@ -68,8 +78,22 @@ namespace AppSettings
 
 	void MapSetting::set(const QVariant& key, const QVariant& value)
 	{ 
-		m_map[key] = value; 
+		size_t currentIdx = getIndex(key);
+		if (currentIdx != std::string::npos)
+			m_map[currentIdx].second = value;
+		else
+			m_map.push_back(std::make_pair(key, value));
 		emit valueChanged(); 
+	}
+	QVariant& MapSetting::operator[](const QVariant& key)
+	{
+		size_t currentIdx = getIndex(key);
+		if (currentIdx != std::string::npos)
+			return m_map[currentIdx].second;
+
+		m_map.push_back(std::make_pair(key, QVariant()));
+		emit valueChanged();
+		return m_map.back().second;
 	}
 
 	QString MapSetting::toString() const
@@ -81,6 +105,51 @@ namespace AppSettings
 		}
 		str += "\n}";
 		return str;
+	}
+	void MapSetting::setMap(const std::vector<std::pair<QVariant, QVariant>>& map)
+	{
+		m_map.reserve(map.size());
+		for (size_t i = 0; i < map.size(); ++i)
+		{
+			if (!contains(map[i].first))
+			{
+				m_map.push_back(map[i]);
+			}
+		}
+		emit valueChanged();
+	}
+	void MapSetting::addPair(const QVariant& key, const QVariant& value)
+	{
+		if (!contains(key))
+		{
+			m_map.push_back(std::make_pair(key, value));
+			emit valueChanged();
+		}
+	}
+
+	void MapSetting::removePair(const QVariant& key)
+	{
+		for (auto it = m_map.begin(); it != m_map.end(); ++it)
+		{
+			if (it->first == key)
+			{
+				m_map.erase(it);
+				emit valueChanged();
+				return;
+			}
+		}
+	}
+
+	bool MapSetting::contains(const QVariant& key) const
+	{
+		for (auto it = m_map.begin(); it != m_map.end(); ++it)
+		{
+			if (it->first == key)
+			{
+				return true;
+			}
+		}
+		return false;	
 	}
 
 	std::vector<QVariant> MapSetting::getKeys() const
@@ -137,10 +206,27 @@ namespace AppSettings
 			QJsonObject obj = mapObject[i].toObject();
 			QVariant key = jsonValueToVariant(obj["Key"]);
 			QVariant val = jsonValueToVariant(obj["Val"]);
-			m_map[key] = val;
+
+			size_t currentIdx = getIndex(key);
+			if (currentIdx != std::string::npos)
+				m_map[currentIdx].second = val;
+			else
+				m_map.push_back(std::make_pair(key, val));
 		}
 		emit valueChanged();
 		return true;
+	}
+
+	size_t MapSetting::getIndex(const QVariant& key) const
+	{
+		for (size_t i = 0; i < m_map.size(); ++i)
+		{
+			if (m_map[i].first == key)
+			{
+				return i;
+			}
+		}
+		return std::string::npos;
 	}
 
 }
