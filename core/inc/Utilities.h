@@ -3,6 +3,8 @@
 #include "AppSettings_base.h"
 #include <QVariant>
 #include <QJsonValue>
+#include <Logger.h>
+
 
 namespace AppSettings
 {

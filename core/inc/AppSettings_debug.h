@@ -2,7 +2,7 @@
 #include "AppSettings_global.h"
 
 /// USER_SECTION_START 1
-#include "Logger.h"
+
 /// USER_SECTION_END
 
 // Debugging
@@ -12,11 +12,11 @@
 #else
 	#include <iostream>
 
-	//#define AS_DEBUG
-	//#define AS_CONSOLE_STREAM std::cout
+	#define AS_DEBUG
+	#define AS_CONSOLE_STREAM std::cout
 
-	//#define AS_CONSOLE(msg) AS_CONSOLE_STREAM << msg;
-	//#define AS_CONSOLE_FUNCTION(msg) AS_CONSOLE_STREAM << __PRETTY_FUNCTION__ << " " << msg;
+	#define AS_CONSOLE(msg) AS_CONSOLE_STREAM << msg;
+	#define AS_CONSOLE_FUNCTION(msg) AS_CONSOLE_STREAM << __PRETTY_FUNCTION__ << " " << msg;
 #endif
 
 /// USER_SECTION_START 2

@@ -3,12 +3,14 @@
 #include "CustomVariants/Selection.h"
 
 #include <QSpinBox>
+#include <QDoubleSpinBox>
 #include <QLineEdit>
 #include <QDateEdit>
 #include <QTimeEdit>
 #include <QCheckBox>
 #include <QLabel>
 #include <QCombobox>
+#include <limits>
 
 namespace AppSettings
 {
@@ -32,11 +34,24 @@ namespace AppSettings
             switch (value.type())
             {
                 case QVariant::Int:
+                {
+                    QSpinBox* spinBox = new QSpinBox(this);
+                    connect(spinBox, QOverload<int>::of(&QSpinBox::valueChanged), this, [&] {emit valueChanged(); });
+                    spinBox->setMinimum(std::numeric_limits<int>::min());
+                    spinBox->setMaximum(std::numeric_limits<int>::max());
+
+                    spinBox->setValue(value.toInt());
+                    m_layout->addWidget(spinBox);
+                    break;
+                }
                 case QVariant::Double:
 				{
-					QSpinBox* spinBox = new QSpinBox(this);
-					connect(spinBox, QOverload<int>::of(&QSpinBox::valueChanged), this, [&] {emit valueChanged(); });
-					spinBox->setValue(value.toInt());
+					QDoubleSpinBox* spinBox = new QDoubleSpinBox(this);
+					connect(spinBox, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, [&] {emit valueChanged(); });
+                    spinBox->setMinimum(std::numeric_limits<double>::min());
+                    spinBox->setMaximum(std::numeric_limits<double>::max());
+
+					spinBox->setValue(value.toDouble());
 					m_layout->addWidget(spinBox);
 					break;
 				}
@@ -104,31 +119,36 @@ namespace AppSettings
         {
             // Get the value of the input field
             QVariant value;
-            if (QSpinBox* spinBox = qobject_cast<QSpinBox*>(m_layout->itemAt(0)->widget()))
+            QWidget *inputWidget = m_layout->itemAt(0)->widget();
+            if (QSpinBox* spinBox = qobject_cast<QSpinBox*>(inputWidget))
             {
                 value = spinBox->value();
             }
-            else if (QLineEdit* lineEdit = qobject_cast<QLineEdit*>(m_layout->itemAt(0)->widget()))
+            if (QDoubleSpinBox* spinBox = qobject_cast<QDoubleSpinBox*>(inputWidget))
+            {
+                value = spinBox->value();
+            }
+            else if (QLineEdit* lineEdit = qobject_cast<QLineEdit*>(inputWidget))
             {
                 value = lineEdit->text();
             }
-            else if (QDateEdit* dateEdit = qobject_cast<QDateEdit*>(m_layout->itemAt(0)->widget()))
+            else if (QDateEdit* dateEdit = qobject_cast<QDateEdit*>(inputWidget))
             {
                 value = dateEdit->date();
             }
-            else if (QTimeEdit* timeEdit = qobject_cast<QTimeEdit*>(m_layout->itemAt(0)->widget()))
+            else if (QTimeEdit* timeEdit = qobject_cast<QTimeEdit*>(inputWidget))
             {
                 value = timeEdit->time();
             }
-            else if (QDateTimeEdit* dateTimeEdit = qobject_cast<QDateTimeEdit*>(m_layout->itemAt(0)->widget()))
+            else if (QDateTimeEdit* dateTimeEdit = qobject_cast<QDateTimeEdit*>(inputWidget))
             {
                 value = dateTimeEdit->dateTime();
             }
-            else if (QCheckBox* checkBox = qobject_cast<QCheckBox*>(m_layout->itemAt(0)->widget()))
+            else if (QCheckBox* checkBox = qobject_cast<QCheckBox*>(inputWidget))
             {
                 value = checkBox->isChecked();
             }
-            else if (QComboBox* comboBox = qobject_cast<QComboBox*>(m_layout->itemAt(0)->widget()))
+            else if (QComboBox* comboBox = qobject_cast<QComboBox*>(inputWidget))
             {
                 value = m_value;
                 Selection selection = value.value<Selection>();

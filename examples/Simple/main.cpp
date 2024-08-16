@@ -2,7 +2,8 @@
 #include <QApplication>
 #endif
 #include <iostream>
-#include "AppSettings.h"
+#include <AppSettings.h>
+#include <Logger.h>
 
 
 class Group0 : public AppSettings::SettingsGroup

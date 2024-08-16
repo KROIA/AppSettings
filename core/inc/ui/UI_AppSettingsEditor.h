@@ -30,12 +30,13 @@ namespace AppSettings
 			~UI_AppSettingsEditor();
 
 		private slots:
-			void onTreeElementClicked(QTreeWidgetItem* item, int column);
+			void onTreeWidgetSelecionChanged(QTreeWidgetItem* current, QTreeWidgetItem* previous);
 
 			void on_save_pushButton_clicked();
 			void on_cancel_pushButton_clicked();
 
 		private:
+			void closeWindow();
 			void showEvent(QShowEvent* event) override;
 			void applySettingGroupsToUI();
 			void showSettingsGroup(SettingsGroup* group);

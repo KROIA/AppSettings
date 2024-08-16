@@ -11,6 +11,8 @@
 
 #include "ApplicationSettings.h"
 
+#include "Utilities.h"
+
 namespace AppSettings
 {
 	namespace UI
@@ -35,28 +37,37 @@ namespace AppSettings
 		}
 
 
-		void UI_AppSettingsEditor::onTreeElementClicked(QTreeWidgetItem* item, int column)
+		void UI_AppSettingsEditor::onTreeWidgetSelecionChanged(QTreeWidgetItem* current, QTreeWidgetItem* previous)
 		{
-			AS_UNUSED(column);
+			AS_UNUSED(previous);
 			for (size_t i = 0; i < m_treeItems.size(); ++i)
 			{
-				if (m_treeItems[i].widgetItem == item)
+				if (m_treeItems[i].widgetItem == current)
 				{
 					showSettingsGroup(m_treeItems[i].settingsGroup);
+					return;
 				}
 			}
 		}
 
+		void UI_AppSettingsEditor::closeWindow()
+		{
+			hide();
+			m_listViewWidgets.clear();
+		}
+
 		void UI_AppSettingsEditor::showEvent(QShowEvent* event)
 		{
-			applySettingGroupsToUI();
 			QWidget::showEvent(event);
+			applySettingGroupsToUI();
+			
 		}
 		void UI_AppSettingsEditor::applySettingGroupsToUI()
 		{
 			m_treeWidget->clear();
 			m_treeItems.clear();
-			connect(m_treeWidget, &QTreeWidget::itemClicked, this, &UI_AppSettingsEditor::onTreeElementClicked);
+			//connect(m_treeWidget, &QTreeWidget::itemClicked, this, &UI_AppSettingsEditor::onTreeElementClicked);
+			connect(m_treeWidget, &QTreeWidget::currentItemChanged, this, &UI_AppSettingsEditor::onTreeWidgetSelecionChanged);
 
 			m_listViewWidgets.clear();
 
@@ -73,14 +84,19 @@ namespace AppSettings
 				
 				addTreeWidgetRecursive(settingGroupElement, groups[i]->getGroups());
 			}
+			if (m_treeItems.size() > 0)
+			{
+				m_treeItems[0].widgetItem->setSelected(true);
+				showSettingsGroup(m_treeItems[0].settingsGroup);
+			}
 
 		}
 		void UI_AppSettingsEditor::showSettingsGroup(SettingsGroup* group)
 		{
 			if (!group)
 				return;
-			if (m_currentVisibleGroup == group)
-				return;
+		//	if (m_currentVisibleGroup == group)
+		//		return;
 			//for (size_t i = 0; i < m_listViewWidgets.size(); ++i)
 			//	delete m_listViewWidgets[i];
 			if (m_currentVisibleGroup)
@@ -99,7 +115,7 @@ namespace AppSettings
 			}
 			
 			
-
+			//logger().logInfo("Selected: "+group->getName().toStdString());
 			const std::vector<ISetting*>& settings = group->getSettings();
 			delete m_spacer;
 			m_spacer = nullptr;
@@ -181,11 +197,11 @@ namespace AppSettings
 				}
 			}
 			ApplicationSettings::saveAll();
+			closeWindow();
 		}
 		void UI_AppSettingsEditor::on_cancel_pushButton_clicked()
 		{
-			hide();
-			m_listViewWidgets.clear();
+			closeWindow();
 		}
 	}
 }
