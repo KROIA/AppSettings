@@ -2,7 +2,7 @@
 #include "AppSettings_global.h"
 
 /// USER_SECTION_START 1
-#include "Logger.h"
+
 /// USER_SECTION_END
 
 // Debugging

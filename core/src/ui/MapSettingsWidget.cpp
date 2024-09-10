@@ -62,7 +62,7 @@ namespace AppSettings
 				bool removeButtonEnabled = m_setting->isRemoveButtonEnabled();
 				bool addButtonEnabled = m_setting->isAddButtonEnabled();
 				m_nameLabel->setText(m_setting->getName());
-				const std::map<QVariant, QVariant>& map = m_setting->getMap();
+				const std::vector<std::pair<QVariant, QVariant>>& map = m_setting->getMap();
 				for (const auto& it : map)
 				{
 					MapWidget* pair = new MapWidget(it.first, it.second, removeButtonEnabled);
@@ -111,10 +111,10 @@ namespace AppSettings
 			if (!m_setting)
 				return;
 			//m_setting->setValue(m_inputWidget->getValue());
-			std::map<QVariant, QVariant> map;
+			std::vector<std::pair<QVariant, QVariant>> map;
 			for (size_t i = 0; i < m_mapWidgets.size(); ++i)
 			{
-				map[m_mapWidgets[i]->key->getValue()] = m_mapWidgets[i]->value->getValue();
+				map.push_back(std::make_pair(m_mapWidgets[i]->key->getValue(), m_mapWidgets[i]->value->getValue()));
 			}
 			m_setting->setMap(map);
 		}
@@ -125,10 +125,10 @@ namespace AppSettings
 			if (!m_setting)
 				return;
 
-			std::map<QVariant, QVariant> map;
+			std::vector<std::pair<QVariant, QVariant>> map;
 			for (size_t i = 0; i < m_mapWidgets.size(); ++i)
 			{
-				map[m_mapWidgets[i]->key->getValue()] = m_mapWidgets[i]->value->getValue();
+				map.push_back(std::make_pair(m_mapWidgets[i]->key->getValue(), m_mapWidgets[i]->value->getValue()));
 			}
 			m_hasChanges = (m_setting->getMap() != map);
 		}
@@ -137,10 +137,10 @@ namespace AppSettings
 			if (!m_setting)
 				return;
 
-			std::map<QVariant, QVariant> map;
+			std::vector<std::pair<QVariant, QVariant>> map;
 			for (size_t i = 0; i < m_mapWidgets.size(); ++i)
 			{
-				map[m_mapWidgets[i]->key->getValue()] = m_mapWidgets[i]->value->getValue();
+				map.push_back(std::make_pair(m_mapWidgets[i]->key->getValue(), m_mapWidgets[i]->value->getValue()));
 			}
 			m_hasChanges = (m_setting->getMap() != map);
 		}
