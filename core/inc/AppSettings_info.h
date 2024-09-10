@@ -4,7 +4,9 @@
 
 /// USER_SECTION_END
 
-#include "AppSettings_base.h"
+#include "AppSettings_global.h"
+#include "AppSettings_debug.h"
+
 #include <sstream>
 
 #define STRINGIFY(x) #x

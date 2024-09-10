@@ -6,6 +6,7 @@
 
 #include "AppSettings_global.h"
 #include "AppSettings_debug.h"
+#include "AppSettings_info.h"
 
 /// USER_SECTION_START 2
 
