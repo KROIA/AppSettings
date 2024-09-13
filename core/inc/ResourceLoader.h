@@ -2,6 +2,7 @@
 
 #include "AppSettings_base.h"
 #include <QIcon>
+#include <map>
 
 namespace AppSettings
 {

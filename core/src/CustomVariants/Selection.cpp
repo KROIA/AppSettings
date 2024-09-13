@@ -26,8 +26,8 @@ namespace AppSettings
 		: m_selection(selection)
 		, m_selectedIndex(currentIndex)
 	{
-		if (currentIndex >= m_selection.size())
-			currentIndex = m_selection.size() - 1;
+		if (currentIndex >= (size_t)m_selection.size())
+			currentIndex = (size_t)m_selection.size() - 1;
 	}
 
 	bool Selection::operator==(const Selection& other) const
@@ -45,14 +45,14 @@ namespace AppSettings
 
 	bool Selection::select(size_t index)
 	{
-		if (index >= m_selection.size())
+		if (index >= (size_t)m_selection.size())
 			return false;
 		m_selectedIndex = index;
 		return true;
 	}
 	bool Selection::select(const QString& element)
 	{
-		for (size_t i = 0; i < m_selection.size(); ++i)
+		for (size_t i = 0; i < (size_t)m_selection.size(); ++i)
 		{
 			if (m_selection[i] == element)
 			{
@@ -90,7 +90,7 @@ namespace AppSettings
 			m_selection.push_back(val.toString());
 		}
 		QString selectedStr = selected.toString();
-		for (size_t i = 0; i < m_selection.size(); ++i)
+		for (size_t i = 0; i < (size_t)m_selection.size(); ++i)
 		{
 			if (m_selection[i] == selectedStr)
 			{

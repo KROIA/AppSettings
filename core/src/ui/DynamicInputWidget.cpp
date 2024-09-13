@@ -20,7 +20,11 @@ namespace AppSettings
             : QWidget(parent) 
         {
             m_layout = new QVBoxLayout(this);
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
             m_layout->setMargin(0);
+#else
+            m_layout->setContentsMargins(0, 0, 0, 0);
+#endif
             setLayout(m_layout);
         }
 
@@ -31,9 +35,13 @@ namespace AppSettings
             m_value = value;
 
             // Check the type of QVariant and create corresponding input field
-            switch (value.type())
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+            switch (static_cast<QMetaType::Type>(value.type()))
+#else
+            switch (static_cast<QMetaType::Type>(value.typeId()))
+#endif
             {
-                case QVariant::Int:
+                case QMetaType::Int:
                 {
                     QSpinBox* spinBox = new QSpinBox(this);
                     connect(spinBox, QOverload<int>::of(&QSpinBox::valueChanged), this, [&] {emit valueChanged(); });
@@ -44,7 +52,7 @@ namespace AppSettings
                     m_layout->addWidget(spinBox);
                     break;
                 }
-                case QVariant::Double:
+                case QMetaType::Double:
 				{
 					QDoubleSpinBox* spinBox = new QDoubleSpinBox(this);
 					connect(spinBox, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, [&] {emit valueChanged(); });
@@ -55,7 +63,7 @@ namespace AppSettings
 					m_layout->addWidget(spinBox);
 					break;
 				}
-                case QVariant::String:
+                case QMetaType::QString:
                 {
                     QLineEdit* lineEdit = new QLineEdit(this);
 					connect(lineEdit, &QLineEdit::textChanged, this, [&] {emit valueChanged(); });
@@ -63,7 +71,7 @@ namespace AppSettings
 					m_layout->addWidget(lineEdit);
 					break;
 				}
-                case QVariant::Date:
+                case QMetaType::QDate:
 				{
 				    QDateEdit* dateEdit = new QDateEdit(this);
                     connect(dateEdit, &QDateEdit::dateChanged, this, [&] {emit valueChanged(); });
@@ -71,7 +79,7 @@ namespace AppSettings
                     m_layout->addWidget(dateEdit);
                     break;
                 }
-                case QVariant::Time:
+                case QMetaType::QTime:
                 {
                     QTimeEdit* timeEdit = new QTimeEdit(this);
                     connect(timeEdit, &QTimeEdit::dateChanged, this, [&] {emit valueChanged(); });
@@ -79,7 +87,7 @@ namespace AppSettings
                     m_layout->addWidget(timeEdit);
                     break;
                 }
-                case QVariant::DateTime:
+                case QMetaType::QDateTime:
                 {
                     QDateTimeEdit* dateTimeEdit = new QDateTimeEdit(this);
                     connect(dateTimeEdit, &QTimeEdit::timeChanged, this, [&] {emit valueChanged(); });
@@ -87,7 +95,7 @@ namespace AppSettings
                     m_layout->addWidget(dateTimeEdit);
                     break;
                 }
-                case QVariant::Bool:
+                case QMetaType::Bool:
 				{
                     QCheckBox* checkBox = new QCheckBox(this);
 				    connect(checkBox, &QCheckBox::stateChanged, this, [&] {emit valueChanged(); });

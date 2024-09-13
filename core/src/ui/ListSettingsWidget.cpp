@@ -20,7 +20,11 @@ namespace AppSettings
 
 
 			QVBoxLayout* layout1 = new QVBoxLayout(this);
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 			layout1->setMargin(0);
+#else
+			layout1->setContentsMargins(0, 0, 0, 0);
+#endif
 			setLayout(layout1);
 			QFrame* frame = new QFrame(this);
 			frame->setFrameShape(QFrame::Shape::Box);

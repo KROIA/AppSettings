@@ -10,24 +10,28 @@ namespace AppSettings
 {
 	QJsonValue variantToJsonValue(const QVariant& var)
 	{
-		switch (var.type())
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+		switch (static_cast<QMetaType::Type>(var.type()))
+#else
+		switch (static_cast<QMetaType::Type>(var.typeId()))
+#endif
 		{
-		case QVariant::Bool:
+		case QMetaType::Bool:
 			return QJsonValue(var.toBool());
-		case QVariant::Int:
+		case QMetaType::Int:
 			return QJsonValue(var.toInt());
-		case QVariant::Double:
+		case QMetaType::Double:
 			return QJsonValue(var.toDouble());
-		case QVariant::String:
+		case QMetaType::QString:
 			return QJsonValue(var.toString());
-		case QVariant::List: {
+		case QMetaType::QVariantList: {
 			QJsonArray jsonArray;
 			for (const QVariant& item : var.toList()) {
 				jsonArray.append(variantToJsonValue(item));
 			}
 			return jsonArray;
 		}
-		case QVariant::Map: {
+		case QMetaType::QVariantMap: {
 			QJsonObject jsonObject;
 			QVariantMap varMap = var.toMap();
 			for (auto it = varMap.begin(); it != varMap.end(); ++it) {
@@ -35,16 +39,16 @@ namespace AppSettings
 			}
 			return jsonObject;
 		}
-		case QVariant::StringList: {
+		case QMetaType::QStringList: {
 			QJsonArray jsonArray;
 			for (const QString& str : var.toStringList()) {
 				jsonArray.append(QJsonValue(str));
 			}
 			return jsonArray;
 		}
-		case QVariant::ByteArray:
+		case QMetaType::QByteArray:
 			return QJsonValue(QString::fromUtf8(var.toByteArray()));
-		case QVariant::ULongLong:
+		case QMetaType::ULongLong:
 			return QJsonValue(static_cast<double>(var.toULongLong())); // No native support for unsigned long long
 		default:
 		{
@@ -61,7 +65,8 @@ namespace AppSettings
 	}
 	QVariant jsonValueToVariant(const QJsonValue& value)
 	{
-		switch (value.type()) {
+		switch (value.type()) 
+		{
 		case QJsonValue::Bool:
 			return QVariant(value.toBool());
 		case QJsonValue::Double:

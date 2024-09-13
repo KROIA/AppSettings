@@ -120,7 +120,7 @@ namespace AppSettings
 			delete m_spacer;
 			m_spacer = nullptr;
 
-			auto &widgets = m_listViewWidgets.find(group);
+			const auto &widgets = m_listViewWidgets.find(group);
 			if (widgets != m_listViewWidgets.end())
 			{
 				for (size_t i = 0; i < widgets->second.size(); ++i)

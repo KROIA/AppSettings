@@ -9,7 +9,11 @@ namespace AppSettings
 			: ISettingsWidget(parent)
 		{
 			m_layout = new QHBoxLayout(this);
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 			m_layout->setMargin(0);
+#else
+			m_layout->setContentsMargins(0, 0, 0, 0);
+#endif
 			setLayout(m_layout);
 			m_inputWidget = new DynamicInputWidget(this);
 			m_nameLabel = new QLabel(this);
