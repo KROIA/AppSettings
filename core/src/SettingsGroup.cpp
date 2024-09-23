@@ -133,7 +133,7 @@ namespace AppSettings
 	{
 		if (!reader.contains(getGroupKey()))
 		{
-			logger().logError("No SettingsGroup with name: \"" + m_name.toStdString() + "\" found");
+			Logger::logError("No SettingsGroup with name: \"" + m_name.toStdString() + "\" found");
 			return false;
 		}
 		QJsonObject group = reader[getGroupKey()].toObject();
@@ -142,7 +142,7 @@ namespace AppSettings
 		{
 			if (!m_settings[i]->load(group))
 			{
-				logger().logError("Failed to read Setting with name: \"" + m_settings[i]->getName().toStdString() + "\"");
+				Logger::logError("Failed to read Setting with name: \"" + m_settings[i]->getName().toStdString() + "\"");
 				success = false;
 			}
 		}

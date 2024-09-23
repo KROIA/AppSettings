@@ -106,9 +106,4 @@ namespace AppSettings
 		return QVariant(); // Unsupported types will return null
 	}
 
-	Log::LogObject& logger()
-	{
-		static Log::LogObject logger(LibraryInfo::name);
-		return logger;
-	}
 }

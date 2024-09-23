@@ -74,14 +74,14 @@ namespace AppSettings
 	{
 		if (!settings.contains(m_name))
 		{
-			logger().logError("Unable to read setting: " + m_name.toStdString()
+			Logger::logError("Unable to read setting: " + m_name.toStdString()
 				+ ". Setting not found");
 			return false;
 		}
 		QJsonValue value = settings[m_name];
 		if (!value.isArray())
 		{
-			logger().logError("Unable to read setting: " + m_name.toStdString()
+			Logger::logError("Unable to read setting: " + m_name.toStdString()
 				+ ". Setting is not an array");
 			return false;
 		}

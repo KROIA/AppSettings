@@ -77,13 +77,13 @@ namespace AppSettings
 			QDir dir2;
 			if (!dir2.mkpath(m_path))
 			{
-				logger().logError("Failed to create directory: \"" + m_path.toStdString() + "\"");
+				Logger::logError("Failed to create directory: \"" + m_path.toStdString() + "\"");
 				success = false;
 				goto exit;
 			}
 			else
 			{
-				logger().logInfo("Created directory: \"" + m_path.toStdString() + "\"");
+				Logger::logInfo("Created directory: \"" + m_path.toStdString() + "\"");
 			}
 		}
 
@@ -93,7 +93,7 @@ namespace AppSettings
 			QFile file(filePath);
 			if (!file.open(QIODevice::WriteOnly))
 			{
-				logger().logError("Failed to open file: \"" + filePath.toStdString() + "\"");
+				Logger::logError("Failed to open file: \"" + filePath.toStdString() + "\"");
 				success = false;
 				goto exit;
 			}
@@ -101,7 +101,7 @@ namespace AppSettings
 				QJsonDocument doc(settings);
 				if (file.write(doc.toJson()) == -1)
 				{
-					logger().logError("Failed to write to file: \"" + filePath.toStdString() + "\"");
+					Logger::logError("Failed to write to file: \"" + filePath.toStdString() + "\"");
 					success = false;
 				}
 			}
@@ -111,9 +111,9 @@ namespace AppSettings
 		exit:
 		emit saveFinished(success);
 		if(success)
-			logger().logInfo("Settings saved successfully: \"" + m_name.toStdString() + "\" to \""+ filePath.toStdString()+"\"");
+			Logger::logInfo("Settings saved successfully: \"" + m_name.toStdString() + "\" to \""+ filePath.toStdString()+"\"");
 		else
-			logger().logError("Failed to save settings: \"" + m_name.toStdString() + "\" to \""+ filePath.toStdString()+"\"");
+			Logger::logError("Failed to save settings: \"" + m_name.toStdString() + "\" to \""+ filePath.toStdString()+"\"");
 		return success;
 	}
 	QJsonObject ApplicationSettings::saveToJson() const
@@ -132,7 +132,7 @@ namespace AppSettings
 		QFile file(filePath);
 		if (!file.open(QIODevice::ReadOnly))
 		{
-			logger().logError("Failed to open file: \"" + filePath.toStdString() + "\"");
+			Logger::logError("Failed to open file: \"" + filePath.toStdString() + "\"");
 			success = false;
 			goto exit;
 		}
@@ -142,7 +142,7 @@ namespace AppSettings
 			file.close();
 			if (!doc.isObject())
 			{
-				logger().logError("Json data is not a JsonObject: \"" + filePath.toStdString() + "\"");
+				Logger::logError("Json data is not a JsonObject: \"" + filePath.toStdString() + "\"");
 				success = false;
 				goto exit;
 			}
@@ -155,9 +155,9 @@ namespace AppSettings
 		exit:
 		emit loadFinished(success);
 		if(success)
-			logger().logInfo("Settings loaded successfully: \"" + m_name.toStdString() + "\" from \""+filePath.toStdString()+"\"");
+			Logger::logInfo("Settings loaded successfully: \"" + m_name.toStdString() + "\" from \""+filePath.toStdString()+"\"");
 		else
-			logger().logError("Failed to load settings: \"" + m_name.toStdString() + "\" from \"" + filePath.toStdString() + "\"");
+			Logger::logError("Failed to load settings: \"" + m_name.toStdString() + "\" from \"" + filePath.toStdString() + "\"");
 		return success;
 	}
 	bool ApplicationSettings::loadFromJson(const QJsonObject& reader)
@@ -248,7 +248,7 @@ namespace AppSettings
 		{
 			if (!m_groups[i]->load(reader))
 			{
-				logger().logError("Failed to read SettingsGroup with name: \"" + m_groups[i]->getName().toStdString() + "\"");
+				Logger::logError("Failed to read SettingsGroup with name: \"" + m_groups[i]->getName().toStdString() + "\"");
 				success = false;
 			}
 		}

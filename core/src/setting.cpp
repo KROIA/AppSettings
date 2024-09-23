@@ -98,7 +98,7 @@ bool Setting::load(const QJsonObject& reader)
 {
     if (reader.find(m_parameter.first) == reader.end())
     {
-        logger().logError("Unable to read setting: "+ m_parameter.first.toStdString()+" Setting not found");
+        Logger::logError("Unable to read setting: "+ m_parameter.first.toStdString()+" Setting not found");
 		return false;
 	}
 	else
@@ -119,7 +119,7 @@ void Setting::setName(const QString &name)
     if(m_parameter.first == name) return;
     if(name == "")
     {
-        logger().logError("Unable to change name from" + m_parameter.first.toStdString()
+        Logger::logError("Unable to change name from" + m_parameter.first.toStdString()
             + " to " + name.toStdString() + "\nnew name is empty");
         return;
     }

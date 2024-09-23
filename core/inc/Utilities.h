@@ -10,6 +10,4 @@ namespace AppSettings
 {
 	QJsonValue APP_SETTINGS_EXPORT variantToJsonValue(const QVariant& var);
 	QVariant APP_SETTINGS_EXPORT jsonValueToVariant(const QJsonValue& value);
-
-	Log::LogObject APP_SETTINGS_EXPORT &logger();
 }
