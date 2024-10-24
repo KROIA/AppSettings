@@ -4,7 +4,7 @@ include(FetchContent)
 function(dep LIBRARY_MACRO_NAME SHARED_LIB STATIC_LIB STATIC_PROFILE_LIB)
     # Define the git repository and tag to download from
     set(LIB_NAME AppSettings)
-    set(LIB_MACRO_NAME APP_SETTINGS)
+    set(LIB_MACRO_NAME APP_SETTINGS_LIBRARY_AVAILABLE)
     set(GIT_REPO https://github.com/KROIA/AppSettings.git)
     set(GIT_TAG main)
 
