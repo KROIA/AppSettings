@@ -29,7 +29,7 @@ namespace AppSettings
 
 /// USER_SECTION_END
 
-	class APP_SETTINGS_EXPORT LibraryInfo
+	class APP_SETTINGS_API LibraryInfo
 	{
 		LibraryInfo() = delete;
 		LibraryInfo(const LibraryInfo&) = delete;

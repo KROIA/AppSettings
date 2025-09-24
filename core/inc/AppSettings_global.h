@@ -11,13 +11,13 @@
 #ifndef BUILD_STATIC
 	//#pragma message("APPSETTINGS_LIB is a shared library")
 	#if defined(APPSETTINGS_LIB)
-		#define APP_SETTINGS_EXPORT __declspec(dllexport)
+		#define APP_SETTINGS_API __declspec(dllexport)
 	#else
-		#define APP_SETTINGS_EXPORT __declspec(dllimport)
+		#define APP_SETTINGS_API __declspec(dllimport)
 	#endif
 #else 
 	//#pragma message("APPSETTINGS_LIB is a static library")
-	#define APP_SETTINGS_EXPORT
+	#define APP_SETTINGS_API
 #endif
 
 /// USER_SECTION_START 2

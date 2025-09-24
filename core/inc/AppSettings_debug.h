@@ -89,7 +89,7 @@ namespace AppSettings
 /// USER_SECTION_START 4
 
 /// USER_SECTION_END
-	class APP_SETTINGS_EXPORT Profiler
+	class APP_SETTINGS_API Profiler
 	{
 	public:
 		/// USER_SECTION_START 5
@@ -112,7 +112,7 @@ namespace AppSettings
 
 
 #if LOGGER_LIBRARY_AVAILABLE == 1
-	class APP_SETTINGS_EXPORT Logger 
+	class APP_SETTINGS_API Logger 
 	{
 		/// USER_SECTION_START 8
 
