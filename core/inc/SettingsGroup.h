@@ -18,7 +18,7 @@ namespace AppSettings
 	/// 
 	/// A tree structure can be created by adding groups to groups.
 	/// </summary>
-	class APP_SETTINGS_EXPORT SettingsGroup : public QObject, public IJsonSerializable
+	class APP_SETTINGS_API SettingsGroup : public QObject, public IJsonSerializable
 	{
 		friend ApplicationSettings;
 		friend UI::UI_AppSettingsEditor;

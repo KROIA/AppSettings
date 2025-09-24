@@ -12,7 +12,7 @@ namespace AppSettings
 	/// Settings type which holds a map of key-value pairs.
 	/// Both key and value are of type QVariant.
 	/// </summary>
-	class APP_SETTINGS_EXPORT MapSetting : public ISetting
+	class APP_SETTINGS_API MapSetting : public ISetting
 	{
 	public:
 

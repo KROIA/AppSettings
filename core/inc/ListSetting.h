@@ -7,7 +7,7 @@
 
 namespace AppSettings
 {
-	class APP_SETTINGS_EXPORT ListSetting : public ISetting
+	class APP_SETTINGS_API ListSetting : public ISetting
 	{
 	public:
 		ListSetting();

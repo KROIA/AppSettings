@@ -15,7 +15,7 @@ namespace AppSettings
         /// This widget is used to edit a QVariant
         /// It automaticly changes the input field, depending on the type of the QVariant
         /// </summary>
-        class APP_SETTINGS_EXPORT DynamicInputWidget : public QWidget {
+        class APP_SETTINGS_API DynamicInputWidget : public QWidget {
             Q_OBJECT
 
         public:

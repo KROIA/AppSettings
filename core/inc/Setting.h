@@ -16,7 +16,7 @@ namespace AppSettings
     /// It contains a name and a value.
     /// The name is a QString and the value is a QVariant.
     /// </summary>
-    class APP_SETTINGS_EXPORT Setting: public ISetting
+    class APP_SETTINGS_API Setting: public ISetting
     {
         friend SettingsGroup;
             

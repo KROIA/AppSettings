@@ -16,7 +16,7 @@ namespace AppSettings
 	namespace UI
 	{
 		class DynamicInputWidget;
-		class APP_SETTINGS_EXPORT SettingsWidget : public ISettingsWidget
+		class APP_SETTINGS_API SettingsWidget : public ISettingsWidget
 		{
 			Q_OBJECT
 

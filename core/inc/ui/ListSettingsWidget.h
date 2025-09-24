@@ -15,7 +15,7 @@ namespace AppSettings
 	class ListSetting;
 	namespace UI
 	{
-		class APP_SETTINGS_EXPORT ListSettingsWidget : public ISettingsWidget
+		class APP_SETTINGS_API ListSettingsWidget : public ISettingsWidget
 		{
 			Q_OBJECT
 

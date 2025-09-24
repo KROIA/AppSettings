@@ -21,7 +21,7 @@ namespace AppSettings
 	class ISetting;
 	namespace UI
 	{
-		class APP_SETTINGS_EXPORT UI_AppSettingsEditor : public QWidget
+		class APP_SETTINGS_API UI_AppSettingsEditor : public QWidget
 		{
 			Q_OBJECT
 

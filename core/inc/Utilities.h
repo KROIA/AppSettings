@@ -8,6 +8,6 @@
 
 namespace AppSettings
 {
-	QJsonValue APP_SETTINGS_EXPORT variantToJsonValue(const QVariant& var);
-	QVariant APP_SETTINGS_EXPORT jsonValueToVariant(const QJsonValue& value);
+	QJsonValue APP_SETTINGS_API variantToJsonValue(const QVariant& var);
+	QVariant APP_SETTINGS_API jsonValueToVariant(const QJsonValue& value);
 }

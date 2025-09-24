@@ -9,7 +9,7 @@ namespace AppSettings
 	/// This class will be the main class for the application settings in a project.
 	/// It will be used to save and load the settings of the application.
 	/// </summary>
-	class APP_SETTINGS_EXPORT ApplicationSettings: public QObject
+	class APP_SETTINGS_API ApplicationSettings: public QObject
 	{
 		Q_OBJECT
 	public:
