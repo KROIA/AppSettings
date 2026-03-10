@@ -1,8 +1,7 @@
 #pragma once
 
-#include "AppSettings_base.h"
-#include <QJsonObject>
 
+class QJsonObject;
 namespace AppSettings
 {
     class IJsonSerializable

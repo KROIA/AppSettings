@@ -2,8 +2,6 @@
 
 #include "AppSettings_base.h"
 #include "IJsonSerializable.h"
-#include <QString>
-#include <QDebug>
 #include <QObject>
 #include <iostream>
 

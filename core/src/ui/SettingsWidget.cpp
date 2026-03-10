@@ -7,6 +7,7 @@ namespace AppSettings
 	{
 		SettingsWidget::SettingsWidget(QWidget* parent)
 			: ISettingsWidget(parent)
+			, m_setting(nullptr)
 		{
 			m_layout = new QHBoxLayout(this);
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
