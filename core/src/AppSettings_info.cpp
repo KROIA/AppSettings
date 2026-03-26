@@ -167,9 +167,10 @@ namespace AppSettings
 		return widget;
 	}
 #else
-	QWidget* LibraryInfo::createInfoWidget(QWidget* parent)
+	QWidget* LibraryInfo::createInfoWidget(QWidget* parent, bool disableHyperlink)
 	{
 		AS_UNUSED(parent);
+		AS_UNUSED(disableHyperlink);
 		return nullptr;
 	}
 #endif
