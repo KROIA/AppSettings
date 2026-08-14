@@ -98,7 +98,14 @@ namespace AppSettings
                 case QMetaType::Bool:
 				{
                     QCheckBox* checkBox = new QCheckBox(this);
+				    // Qt 6.9 deprecated QCheckBox::stateChanged(int) in favour of
+				    // checkStateChanged(Qt::CheckState). The slot ignores the argument,
+				    // so only the signal has to be selected.
+#if QT_VERSION >= QT_VERSION_CHECK(6, 9, 0)
+				    connect(checkBox, &QCheckBox::checkStateChanged, this, [&] {emit valueChanged(); });
+#else
 				    connect(checkBox, &QCheckBox::stateChanged, this, [&] {emit valueChanged(); });
+#endif
 				    checkBox->setChecked(value.toBool());
 				    m_layout->addWidget(checkBox);
 				    break;
