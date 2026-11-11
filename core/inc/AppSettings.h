@@ -18,6 +18,7 @@
 #include "MapSetting.h"
 #include "SettingsGroup.h"
 #include "ApplicationSettings.h"
+#include "Utilities.h"
 
 #include "CustomVariants/Selection.h"
 

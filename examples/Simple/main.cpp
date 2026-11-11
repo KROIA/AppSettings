@@ -126,6 +126,9 @@ int main(int argc, char* argv[])
 #endif
 #ifdef QT_ENABLED
 	QApplication app(argc, argv);
+	// UI texts in the system language, English if it is not available.
+	// For a fixed language: AppSettings::installTranslator(QLocale(QLocale::English));
+	AppSettings::installTranslator();
 #endif
 	//Log::UI::QConsoleView* console = new Log::UI::QConsoleView();
 	//console->show();

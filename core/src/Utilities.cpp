@@ -6,6 +6,16 @@
 #include "CustomVariants/Selection.h"
 #include "AppSettings_info.h"
 
+#include <QCoreApplication>
+#include <QTranslator>
+
+// Q_INIT_RESOURCE must be used outside of a namespace.
+// Needed for the static library, where the resource is not registered automatically.
+static void initTranslationResource()
+{
+	Q_INIT_RESOURCE(appsettings_translations);
+}
+
 
 namespace AppSettings
 {
@@ -137,4 +147,21 @@ namespace AppSettings
 		return converted;
 	}
 
+	bool installTranslator(const QLocale& locale)
+	{
+		static QTranslator translator;
+		initTranslationResource();
+		QCoreApplication::removeTranslator(&translator);
+
+		// The source texts are German
+		if (locale.language() == QLocale::German)
+			return true;
+
+		const QString directory = ":/AppSettings/translations";
+		bool found = translator.load(locale, "appsettings", "_", directory);
+		if (!found && !translator.load(QLocale(QLocale::English), "appsettings", "_", directory))
+			return false;
+		QCoreApplication::installTranslator(&translator);
+		return found;
+	}
 }

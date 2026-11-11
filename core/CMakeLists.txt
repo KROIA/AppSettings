@@ -56,6 +56,47 @@ unset(_ver_h_in)
 
 ## USER_SECTION_START 2
 
+# Translations: lrelease turns every .ts into a .qm at build time, rcc embeds them
+# at :/AppSettings/translations (resource name appsettings_translations).
+# lupdate never runs during the build, only with the target ${LIBRARY_NAME}_lupdate.
+# To add a language, add its .ts file here.
+set(TS_FILES
+    ${CMAKE_CURRENT_SOURCE_DIR}/translations/appsettings_en.ts
+)
+if(QT_ENABLE)
+    find_package(${QT_PACKAGE_NAME} REQUIRED COMPONENTS LinguistTools)
+
+    set(_qm_files)
+    set(_qrc_entries)
+    foreach(_ts ${TS_FILES})
+        get_filename_component(_name ${_ts} NAME_WE)
+        set(_qm "${CMAKE_CURRENT_BINARY_DIR}/translations/${_name}.qm")
+        add_custom_command(OUTPUT ${_qm}
+            COMMAND ${QT_PACKAGE_NAME}::lrelease ${_ts} -qm ${_qm}
+            DEPENDS ${_ts}
+            VERBATIM)
+        list(APPEND _qm_files ${_qm})
+        string(APPEND _qrc_entries "        <file alias=\"${_name}.qm\">${_qm}</file>\n")
+    endforeach()
+
+    set(_qrc "${CMAKE_CURRENT_BINARY_DIR}/translations/appsettings_translations.qrc")
+    file(CONFIGURE OUTPUT ${_qrc} CONTENT
+        "<RCC>\n    <qresource prefix=\"/AppSettings/translations\">\n${_qrc_entries}    </qresource>\n</RCC>\n")
+    set(_qrc_cpp "${CMAKE_CURRENT_BINARY_DIR}/translations/qrc_appsettings_translations.cpp")
+    add_custom_command(OUTPUT ${_qrc_cpp}
+        COMMAND ${QT_PACKAGE_NAME}::rcc -name appsettings_translations ${_qrc} -o ${_qrc_cpp}
+        DEPENDS ${_qrc} ${_qm_files}
+        VERBATIM)
+    set_source_files_properties(${_qrc_cpp} PROPERTIES SKIP_AUTOGEN ON)
+    list(APPEND SOURCES ${_qrc_cpp})
+
+    # Run manually: cmake --build <build dir> --target AppSettings_lupdate
+    add_custom_target(${LIBRARY_NAME}_lupdate
+        COMMAND ${QT_PACKAGE_NAME}::lupdate
+            ${CMAKE_CURRENT_SOURCE_DIR}/src ${CMAKE_CURRENT_SOURCE_DIR}/inc ${CMAKE_CURRENT_SOURCE_DIR}/ui
+            -source-language de -ts ${TS_FILES}
+        VERBATIM)
+endif()
 ## USER_SECTION_END
 
 if(QT_ENABLE)

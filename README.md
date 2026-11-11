@@ -44,3 +44,22 @@ If a validator returns a message, it is shown, nothing is saved and the editor s
 
 ### Filter in the editor
 The filter field above the settings list shows only the settings whose name or saved value contains the typed text (case insensitive).
+
+### Translations
+The UI texts are German. Call `installTranslator()` after creating the `QApplication` to show them in another language:
+```cpp
+AppSettings::installTranslator();                           // system language
+AppSettings::installTranslator(QLocale(QLocale::English)); // fixed language
+```
+For a German locale the German texts are shown. If there is no translation for the locale, English is used and `installTranslator()` returns false.
+The translations are embedded in the library, nothing has to be deployed.
+
+To add a language:
+1. Copy `core/translations/appsettings_en.ts` to `appsettings_<language>.ts` (e.g. `appsettings_fr.ts`) and set `language="fr"` in the `TS` tag.
+2. Translate it, e.g. with Qt Linguist.
+3. Add the file to `TS_FILES` in `core/CMakeLists.txt`.
+
+After changing UI texts, update the `.ts` files with the `AppSettings_lupdate` target (it never runs during a normal build):
+```
+cmake --build build/x64-Debug --target AppSettings_lupdate
+```

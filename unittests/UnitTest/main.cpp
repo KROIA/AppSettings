@@ -8,6 +8,7 @@ TEST_INSTANTIATE(Test_types);
 TEST_INSTANTIATE(Test_defaults);
 TEST_INSTANTIATE(Test_validation);
 TEST_INSTANTIATE(Test_encoding);
+TEST_INSTANTIATE(Test_translation);
 
 int main(int argc, char** argv)
 {

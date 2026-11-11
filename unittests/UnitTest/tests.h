@@ -6,3 +6,4 @@
 #include "test_defaults.h"
 #include "test_validation.h"
 #include "test_encoding.h"
+#include "test_translation.h"
