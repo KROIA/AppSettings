@@ -84,6 +84,27 @@ namespace AppSettings
 		}
 	}
 
+	void SettingsGroup::setValidator(Validator validator)
+	{
+		m_validator = std::move(validator);
+	}
+	QString SettingsGroup::validate() const
+	{
+		if (m_validator)
+		{
+			QString message = m_validator(*this);
+			if (!message.isEmpty())
+				return message;
+		}
+		for (const SettingsGroup* group : m_groups)
+		{
+			QString message = group->validate();
+			if (!message.isEmpty())
+				return message;
+		}
+		return QString();
+	}
+
 	QString SettingsGroup::toString() const
 	{
 		return toString_internal(0)+"\n";

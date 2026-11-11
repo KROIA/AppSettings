@@ -13,6 +13,10 @@
 
 #include "Utilities.h"
 
+#include <QMessageBox>
+#include <QSignalBlocker>
+#include <functional>
+
 namespace AppSettings
 {
 	namespace UI
@@ -189,6 +193,68 @@ namespace AppSettings
 
 		void UI_AppSettingsEditor::on_save_pushButton_clicked()
 		{
+			// Validate the edited values before anything is saved:
+			// apply them with blocked signals, run the validators, then restore the old values.
+			std::vector<ISetting*> touched;
+			std::vector<std::function<void()>> restore;
+			for (auto& it : m_listViewWidgets)
+			{
+				for (const auto& widget : it.second)
+				{
+					if (SettingsWidget* w = dynamic_cast<SettingsWidget*>(widget.get()))
+					{
+						if (Setting* s = w->getSetting())
+						{
+							touched.push_back(s);
+							restore.push_back([s, old = s->getValue()] { s->setValue(old); });
+						}
+					}
+					else if (ListSettingsWidget* lw = dynamic_cast<ListSettingsWidget*>(widget.get()))
+					{
+						if (ListSetting* s = lw->getSetting())
+						{
+							touched.push_back(s);
+							restore.push_back([s, old = s->getData()] { s->setData(old); });
+						}
+					}
+					else if (MapSettingsWidget* mw = dynamic_cast<MapSettingsWidget*>(widget.get()))
+					{
+						if (MapSetting* s = mw->getSetting())
+						{
+							touched.push_back(s);
+							restore.push_back([s, old = s->getMap()] { s->setMap(old); });
+						}
+					}
+				}
+			}
+
+			QString message;
+			{
+				std::vector<QSignalBlocker> blockers;
+				blockers.reserve(touched.size());
+				for (ISetting* s : touched)
+					blockers.emplace_back(s);
+
+				for (auto& it : m_listViewWidgets)
+				{
+					for (const auto& widget : it.second)
+						widget->saveSetting();
+				}
+				for (const SettingsGroup* group : SettingsGroup::getRootGroups())
+				{
+					message = group->validate();
+					if (!message.isEmpty())
+						break;
+				}
+				for (const auto& r : restore)
+					r();
+			}
+			if (!message.isEmpty())
+			{
+				QMessageBox::warning(this, "Invalid settings", message);
+				return;
+			}
+
 			for(auto& it : m_listViewWidgets)
 			{
 				for (size_t i = 0; i < it.second.size(); ++i)

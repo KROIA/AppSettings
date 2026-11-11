@@ -3,6 +3,7 @@
 #include "AppSettings_base.h"
 #include "ISetting.h"
 #include <vector>
+#include <functional>
 #include <QObject>
 
 namespace AppSettings
@@ -24,6 +25,12 @@ namespace AppSettings
 		friend UI::UI_AppSettingsEditor;
 		Q_OBJECT
 	public:
+		/// <summary>
+		/// Checks the values of a group.
+		/// Returns an empty string if the values are valid, otherwise a message for the user.
+		/// </summary>
+		using Validator = std::function<QString(const SettingsGroup&)>;
+
 		/// <summary>
 		/// Creates a new group with the given name.
 		/// </summary>
@@ -94,6 +101,19 @@ namespace AppSettings
 		/// </summary>
 		/// <param name="recursive">If true, the settings of all subgroups are reset too</param>
 		void resetToDefault(bool recursive = true);
+
+		/// <summary>
+		/// Sets the validator of this group. The editor calls it before it saves.
+		/// An empty validator removes the check.
+		/// </summary>
+		/// <param name="validator">Function which returns an empty string if the group is valid, otherwise a message</param>
+		void setValidator(Validator validator);
+
+		/// <summary>
+		/// Runs the validator of this group, then the validators of all subgroups (recursive).
+		/// </summary>
+		/// <returns>The first non-empty message, or an empty string if all groups are valid</returns>
+		QString validate() const;
 
 		/// <summary>
 		/// Serializes the group to a string with the format:
@@ -182,5 +202,6 @@ namespace AppSettings
 		QString m_name;
 		std::vector<ISetting*> m_settings;
 		std::vector<SettingsGroup*> m_groups;
+		Validator m_validator;
 	};
 }

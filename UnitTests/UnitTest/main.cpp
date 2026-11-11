@@ -6,6 +6,7 @@ TEST_INSTANTIATE(Test_simple);
 TEST_INSTANTIATE(Test_nasted);
 TEST_INSTANTIATE(Test_types);
 TEST_INSTANTIATE(Test_defaults);
+TEST_INSTANTIATE(Test_validation);
 
 int main(int argc, char** argv)
 {
