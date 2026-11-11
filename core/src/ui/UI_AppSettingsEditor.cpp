@@ -34,6 +34,8 @@ namespace AppSettings
 			central->setLayout(layout);
 			m_scrollArea->setWidget(central);
 			m_scrollArea->setWidgetResizable(true);
+
+			connect(ui->filter_lineEdit, &QLineEdit::textChanged, this, &UI_AppSettingsEditor::applyFilter);
 		}
 
 		UI_AppSettingsEditor::~UI_AppSettingsEditor()
@@ -152,6 +154,7 @@ namespace AppSettings
 			m_spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 			m_scrollArea->widget()->layout()->addWidget(m_spacer);
 			m_currentVisibleGroup = group;
+			applyFilter();
 		}
 		ISettingsWidget* UI_AppSettingsEditor::createSettingsWidget(ISetting* setting)
 		{
@@ -268,6 +271,16 @@ namespace AppSettings
 		void UI_AppSettingsEditor::on_cancel_pushButton_clicked()
 		{
 			closeWindow();
+		}
+		void UI_AppSettingsEditor::applyFilter()
+		{
+			// Hides the rows of the shown group which don't match the filter text
+			const auto& it = m_listViewWidgets.find(m_currentVisibleGroup);
+			if (it == m_listViewWidgets.end())
+				return;
+			const QString text = ui->filter_lineEdit->text();
+			for (const auto& widget : it->second)
+				widget->setVisible(widget->matchesFilter(text));
 		}
 		void UI_AppSettingsEditor::on_resetGroup_pushButton_clicked()
 		{

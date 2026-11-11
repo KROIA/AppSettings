@@ -35,6 +35,7 @@ namespace AppSettings
 			void on_save_pushButton_clicked();
 			void on_cancel_pushButton_clicked();
 			void on_resetGroup_pushButton_clicked();
+			void applyFilter();
 
 		private:
 			void closeWindow();

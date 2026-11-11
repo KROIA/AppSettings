@@ -53,6 +53,7 @@ namespace AppSettings
 		void ListSettingsWidget::setSetting(ListSetting* setting)
 		{
 			m_setting = setting;
+			m_filterSetting = setting;
 			for (size_t i = 0; i < m_listWidgets.size(); ++i)
 			{
 				delete m_listWidgets[i];

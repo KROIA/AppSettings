@@ -53,6 +53,7 @@ namespace AppSettings
 		void MapSettingsWidget::setSetting(MapSetting* setting)
 		{
 			m_setting = setting;
+			m_filterSetting = setting;
 			for (size_t i = 0; i < m_mapWidgets.size(); ++i)
 			{
 				delete m_mapWidgets[i];

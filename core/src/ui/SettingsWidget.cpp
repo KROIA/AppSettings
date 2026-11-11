@@ -34,6 +34,7 @@ namespace AppSettings
 		void SettingsWidget::setSetting(Setting* setting)
 		{
 			m_setting = setting;
+			m_filterSetting = setting;
 			if (m_setting)
 			{
 				m_nameLabel->setText(m_setting->getName());
