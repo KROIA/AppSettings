@@ -53,7 +53,7 @@ namespace AppSettings
 		{
 			QToolButton* button = new QToolButton(this);
 			button->setIcon(style()->standardIcon(QStyle::SP_BrowserReload));
-			button->setToolTip("Reset to default");
+			button->setToolTip(QString::fromUtf8("Auf Standardwert zur\xc3\xbc" "cksetzen"));
 			connect(button, &QToolButton::clicked, this, &ISettingsWidget::resetToDefault);
 			return button;
 		}

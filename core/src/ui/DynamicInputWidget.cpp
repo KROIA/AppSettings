@@ -59,7 +59,7 @@ namespace AppSettings
 				{
 					QDoubleSpinBox* spinBox = new QDoubleSpinBox(this);
 					connect(spinBox, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, [&] {emit valueChanged(); });
-                    spinBox->setMinimum(std::numeric_limits<double>::min());
+                    spinBox->setMinimum(std::numeric_limits<double>::lowest());
                     spinBox->setMaximum(std::numeric_limits<double>::max());
 
 					spinBox->setValue(value.toDouble());
@@ -123,7 +123,7 @@ namespace AppSettings
 					QKeySequenceEdit* keyEdit = new QKeySequenceEdit(value.value<QKeySequence>(), container);
 					QToolButton* clearButton = new QToolButton(container);
 					clearButton->setText("X");
-					clearButton->setToolTip("Clear shortcut");
+					clearButton->setToolTip(QString::fromUtf8("Tastenk\xc3\xbcrzel l\xc3\xb6schen"));
 					hLayout->addWidget(keyEdit);
 					hLayout->addWidget(clearButton);
 					connect(keyEdit, &QKeySequenceEdit::keySequenceChanged, this, [this] {emit valueChanged(); });

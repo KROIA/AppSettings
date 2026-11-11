@@ -36,7 +36,7 @@
        <item>
         <widget class="QLineEdit" name="filter_lineEdit">
          <property name="placeholderText">
-          <string>Filter settings...</string>
+          <string>Einstellungen filtern...</string>
          </property>
          <property name="clearButtonEnabled">
           <bool>true</bool>
@@ -88,10 +88,10 @@
       <item>
        <widget class="QPushButton" name="resetGroup_pushButton">
         <property name="toolTip">
-         <string>Reset all settings of this group to their default values</string>
+         <string>Alle Einstellungen dieser Gruppe auf ihre Standardwerte zurücksetzen</string>
         </property>
         <property name="text">
-         <string>Reset group</string>
+         <string>Gruppe zurücksetzen</string>
         </property>
        </widget>
       </item>
