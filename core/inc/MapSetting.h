@@ -37,6 +37,23 @@ namespace AppSettings
 		void addPair(const QVariant& key, const QVariant& value);
 		void removePair(const QVariant& key);
 		const std::vector<std::pair<QVariant, QVariant>> &getMap() const { return m_map; }
+
+		/// <summary>
+		/// Gets the default map, which is the map the setting was constructed with
+		/// </summary>
+		/// <returns>The default map</returns>
+		const std::vector<std::pair<QVariant, QVariant>>& getDefaultMap() const { return m_defaultMap; }
+
+		/// <summary>
+		/// Sets the map back to the default map. Emits valueChanged().
+		/// </summary>
+		void resetToDefault() override;
+
+		/// <summary>
+		/// Checks if the current map equals the default map (same pairs in the same order)
+		/// </summary>
+		/// <returns>True, if the map equals the default map</returns>
+		bool isDefault() const override;
 		void clear() { m_map.clear(); }
 		bool contains(const QVariant& key) const;
 		size_t size() const { return m_map.size(); }
@@ -59,6 +76,7 @@ namespace AppSettings
 		// Can't use std::map because QVariant operator > & < is deprecated 
 		// This is a pseudo map, which is actually a vector of pairs
 		std::vector<std::pair<QVariant,QVariant>> m_map;
+		std::vector<std::pair<QVariant, QVariant>> m_defaultMap;
 
 		// Flags to enable/disable the add and remove buttons in the UI
 		bool m_enableAddButton = true;

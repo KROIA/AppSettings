@@ -90,6 +90,12 @@ namespace AppSettings
 		const std::vector<ISetting*>& getSettings() const { return m_settings; }
 
 		/// <summary>
+		/// Resets all settings of this group to their default values.
+		/// </summary>
+		/// <param name="recursive">If true, the settings of all subgroups are reset too</param>
+		void resetToDefault(bool recursive = true);
+
+		/// <summary>
 		/// Serializes the group to a string with the format:
 		/// "{ name
 		///		[0] name1 = value1

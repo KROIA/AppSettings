@@ -35,7 +35,11 @@ namespace AppSettings
 			//frame->setMinimumSize(QSize(100, 100));
 			layout1->addWidget(frame);
 			m_nameLabel = new QLabel(this);
-			vLayout->addWidget(m_nameLabel);
+			QHBoxLayout* headerLayout = new QHBoxLayout();
+			headerLayout->addWidget(m_nameLabel);
+			headerLayout->addStretch();
+			headerLayout->addWidget(createResetButton());
+			vLayout->addLayout(headerLayout);
 			vLayout->addWidget(m_contentWidget);
 			
 			
@@ -63,27 +67,9 @@ namespace AppSettings
 
 			if (m_setting)
 			{
-				bool removeButtonEnabled = m_setting->isRemoveButtonEnabled();
 				bool addButtonEnabled = m_setting->isAddButtonEnabled();
 				m_nameLabel->setText(m_setting->getName());
-				const std::vector<std::pair<QVariant, QVariant>>& map = m_setting->getMap();
-				for (const auto& it : map)
-				{
-					MapWidget* pair = new MapWidget(it.first, it.second, removeButtonEnabled);
-					connect(pair->key, &DynamicInputWidget::valueChanged, this, &MapSettingsWidget::onKeyChanged);
-					connect(pair->value, &DynamicInputWidget::valueChanged, this, &MapSettingsWidget::onValueChanged);
-
-					
-					gridLayout->addWidget(pair->key, m_mapWidgets.size(), 0);
-					gridLayout->addWidget(pair->value, m_mapWidgets.size(), 1);
-					if (pair->removeButton)
-					{
-						connect(pair->removeButton, &QPushButton::clicked, this, &MapSettingsWidget::onRemoveButtonClicked);
-						gridLayout->addWidget(pair->removeButton, m_mapWidgets.size(), 2);
-					}
-					m_mapWidgets.push_back(pair);
-
-				}
+				setRows(m_setting->getMap());
 
 				if (addButtonEnabled)
 				{
@@ -123,6 +109,43 @@ namespace AppSettings
 			m_setting->setMap(map);
 		}
 
+
+		void MapSettingsWidget::resetToDefault()
+		{
+			if (!m_setting)
+				return;
+			setRows(m_setting->getDefaultMap());
+			if (m_addButton)
+				replaceAddButton();
+			onValueChanged();
+			emit valueChanged();
+		}
+
+		void MapSettingsWidget::setRows(const std::vector<std::pair<QVariant, QVariant>>& map)
+		{
+			for (size_t i = 0; i < m_mapWidgets.size(); ++i)
+			{
+				delete m_mapWidgets[i];
+			}
+			m_mapWidgets.clear();
+
+			bool removeButtonEnabled = m_setting->isRemoveButtonEnabled();
+			for (const auto& it : map)
+			{
+				MapWidget* pair = new MapWidget(it.first, it.second, removeButtonEnabled);
+				connect(pair->key, &DynamicInputWidget::valueChanged, this, &MapSettingsWidget::onKeyChanged);
+				connect(pair->value, &DynamicInputWidget::valueChanged, this, &MapSettingsWidget::onValueChanged);
+
+				m_contentGridLayout->addWidget(pair->key, m_mapWidgets.size(), 0);
+				m_contentGridLayout->addWidget(pair->value, m_mapWidgets.size(), 1);
+				if (pair->removeButton)
+				{
+					connect(pair->removeButton, &QPushButton::clicked, this, &MapSettingsWidget::onRemoveButtonClicked);
+					m_contentGridLayout->addWidget(pair->removeButton, m_mapWidgets.size(), 2);
+				}
+				m_mapWidgets.push_back(pair);
+			}
+		}
 
 		void MapSettingsWidget::onKeyChanged()
 		{

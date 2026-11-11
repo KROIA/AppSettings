@@ -20,6 +20,8 @@ namespace AppSettings
 			m_nameLabel = new QLabel(this);
 			m_layout->addWidget(m_nameLabel);
 			m_layout->addWidget(m_inputWidget);
+			m_resetButton = createResetButton();
+			m_layout->addWidget(m_resetButton);
 
 			connect(m_inputWidget, &DynamicInputWidget::valueChanged, this, &SettingsWidget::valueChanged);
 		}
@@ -36,6 +38,7 @@ namespace AppSettings
 			{
 				m_nameLabel->setText(m_setting->getName());
 				m_inputWidget->setValue(m_setting->getValue());
+				m_resetButton->setToolTip("Reset to default: " + m_setting->getDefaultValue().toString());
 			}
 			else
 			{
@@ -49,6 +52,14 @@ namespace AppSettings
 			if (!m_setting)
 				return;
 			m_setting->setValue(m_inputWidget->getValue());
+		}
+
+		void SettingsWidget::resetToDefault()
+		{
+			if (!m_setting)
+				return;
+			m_inputWidget->setValue(m_setting->getDefaultValue());
+			emit valueChanged();
 		}
 
 		void SettingsWidget::onValueChanged()

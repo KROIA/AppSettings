@@ -12,6 +12,7 @@ namespace AppSettings
 	MapSetting::MapSetting(const MapSetting& other)
 		: m_name(other.m_name)
 		, m_map(other.m_map)
+		, m_defaultMap(other.m_defaultMap)
 	{
 
 	}
@@ -24,6 +25,7 @@ namespace AppSettings
 		: m_name(name)
 	{
 		setMap(map);
+		m_defaultMap = m_map;
 	}
 
 	bool MapSetting::operator==(const MapSetting& other) const
@@ -72,6 +74,7 @@ namespace AppSettings
 		}
 		m_enableAddButton = other.m_enableAddButton;
 		m_enableRemoveButton = other.m_enableRemoveButton;
+		m_defaultMap = other.m_defaultMap;
 		emit valueChanged();
 		return *this;
 	}
@@ -108,6 +111,7 @@ namespace AppSettings
 	}
 	void MapSetting::setMap(const std::vector<std::pair<QVariant, QVariant>>& map)
 	{
+		m_map.clear();
 		m_map.reserve(map.size());
 		for (size_t i = 0; i < map.size(); ++i)
 		{
@@ -117,6 +121,15 @@ namespace AppSettings
 			}
 		}
 		emit valueChanged();
+	}
+	void MapSetting::resetToDefault()
+	{
+		m_map = m_defaultMap;
+		emit valueChanged();
+	}
+	bool MapSetting::isDefault() const
+	{
+		return m_map == m_defaultMap;
 	}
 	void MapSetting::addPair(const QVariant& key, const QVariant& value)
 	{

@@ -32,6 +32,12 @@ namespace AppSettings
 		public slots:
 			void saveSetting() override;
 
+			/// <summary>
+			/// Shows the default map of the setting in the editor.
+			/// The setting itself only changes when saveSetting() is called.
+			/// </summary>
+			void resetToDefault() override;
+
 		private slots:
 			void onKeyChanged();
 			void onValueChanged();
@@ -41,6 +47,7 @@ namespace AppSettings
 
 		private:
 			void replaceAddButton();
+			void setRows(const std::vector<std::pair<QVariant, QVariant>>& map);
 
 			MapSetting* m_setting = nullptr;
 

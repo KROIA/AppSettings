@@ -12,15 +12,18 @@ Setting::Setting(const Setting &other)
     : ISetting()
 {
     m_parameter = other.m_parameter;
+    m_default = other.m_default;
 }
 Setting::Setting(const QString &name, const QVariant &value)
 {
     m_parameter.first = name;
     m_parameter.second = value;
+    m_default = value;
 }
 Setting::Setting(const std::pair<QString,QVariant> &setting)
 {
     m_parameter = setting;
+    m_default = setting.second;
 }
 Setting::~Setting()
 {
@@ -55,6 +58,7 @@ Setting &Setting::operator=(const Setting &other)
 {
     setName(other.m_parameter.first);
     setValue(other.m_parameter.second);
+    m_default = other.m_default;
     return *this;
 }
 Setting &Setting::operator=(const QVariant &value)
@@ -65,6 +69,18 @@ Setting &Setting::operator=(const QVariant &value)
 const QVariant &Setting::getValue() const
 {
     return m_parameter.second;
+}
+const QVariant &Setting::getDefaultValue() const
+{
+    return m_default;
+}
+void Setting::resetToDefault()
+{
+    setValue(m_default);
+}
+bool Setting::isDefault() const
+{
+    return m_parameter.second == m_default;
 }
 QString Setting::getName() const
 {

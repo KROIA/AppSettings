@@ -48,6 +48,23 @@ namespace AppSettings
 
 		const std::vector<QVariant>& getData() const {	return m_list;	}
 
+		/// <summary>
+		/// Gets the default list, which is the list the setting was constructed with
+		/// </summary>
+		/// <returns>The default list</returns>
+		const std::vector<QVariant>& getDefaultData() const { return m_defaultList; }
+
+		/// <summary>
+		/// Sets the list back to the default list. Emits valueChanged().
+		/// </summary>
+		void resetToDefault() override;
+
+		/// <summary>
+		/// Checks if the current list equals the default list
+		/// </summary>
+		/// <returns>True, if the list equals the default list</returns>
+		bool isDefault() const override;
+
 		bool isAddButtonEnabled() const { return m_enableAddButton; }
 		void setAddButtonEnabled(bool enabled) { m_enableAddButton = enabled; }
 		bool isRemoveButtonEnabled() const { return m_enableRemoveButton; }
@@ -61,6 +78,7 @@ namespace AppSettings
 
 		QString m_name;
 		std::vector<QVariant> m_list;
+		std::vector<QVariant> m_defaultList;
 
 		// Flags to enable/disable the add and remove buttons in the UI
 		bool m_enableAddButton = true;

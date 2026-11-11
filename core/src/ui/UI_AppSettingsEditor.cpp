@@ -203,5 +203,14 @@ namespace AppSettings
 		{
 			closeWindow();
 		}
+		void UI_AppSettingsEditor::on_resetGroup_pushButton_clicked()
+		{
+			// Only the displayed values change. Save applies them, Cancel discards them.
+			const auto& it = m_listViewWidgets.find(m_currentVisibleGroup);
+			if (it == m_listViewWidgets.end())
+				return;
+			for (const auto& widget : it->second)
+				widget->resetToDefault();
+		}
 	}
 }

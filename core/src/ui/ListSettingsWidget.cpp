@@ -35,7 +35,11 @@ namespace AppSettings
 			//frame->setMinimumSize(QSize(100, 100));
 			layout1->addWidget(frame);
 			m_nameLabel = new QLabel(this);
-			vLayout->addWidget(m_nameLabel);
+			QHBoxLayout* headerLayout = new QHBoxLayout();
+			headerLayout->addWidget(m_nameLabel);
+			headerLayout->addStretch();
+			headerLayout->addWidget(createResetButton());
+			vLayout->addLayout(headerLayout);
 			vLayout->addWidget(m_contentWidget);
 
 
@@ -63,25 +67,9 @@ namespace AppSettings
 
 			if (m_setting)
 			{
-				bool removeButtonEnabled = m_setting->isRemoveButtonEnabled();
 				bool addButtonEnabled = m_setting->isAddButtonEnabled();
 				m_nameLabel->setText(m_setting->getName());
-				const std::vector<QVariant>& list = m_setting->getData();
-				for (const auto& it : list)
-				{
-					ListWidget* listWidget = new ListWidget(it, removeButtonEnabled);
-					connect(listWidget->value, &DynamicInputWidget::valueChanged, this, &ListSettingsWidget::onValueChanged);
-
-
-					gridLayout->addWidget(listWidget->value, m_listWidgets.size(), 0);
-					if (listWidget->removeButton)
-					{
-						connect(listWidget->removeButton, &QPushButton::clicked, this, &ListSettingsWidget::onRemoveButtonClicked);
-						gridLayout->addWidget(listWidget->removeButton, m_listWidgets.size(), 1);
-					}
-					m_listWidgets.push_back(listWidget);
-
-				}
+				setRows(m_setting->getData());
 
 				if (addButtonEnabled)
 				{
@@ -121,6 +109,41 @@ namespace AppSettings
 			m_setting->setData(data);
 		}
 
+
+		void ListSettingsWidget::resetToDefault()
+		{
+			if (!m_setting)
+				return;
+			setRows(m_setting->getDefaultData());
+			if (m_addButton)
+				replaceAddButton();
+			onValueChanged();
+			emit valueChanged();
+		}
+
+		void ListSettingsWidget::setRows(const std::vector<QVariant>& list)
+		{
+			for (size_t i = 0; i < m_listWidgets.size(); ++i)
+			{
+				delete m_listWidgets[i];
+			}
+			m_listWidgets.clear();
+
+			bool removeButtonEnabled = m_setting->isRemoveButtonEnabled();
+			for (const auto& it : list)
+			{
+				ListWidget* listWidget = new ListWidget(it, removeButtonEnabled);
+				connect(listWidget->value, &DynamicInputWidget::valueChanged, this, &ListSettingsWidget::onValueChanged);
+
+				m_contentGridLayout->addWidget(listWidget->value, m_listWidgets.size(), 0);
+				if (listWidget->removeButton)
+				{
+					connect(listWidget->removeButton, &QPushButton::clicked, this, &ListSettingsWidget::onRemoveButtonClicked);
+					m_contentGridLayout->addWidget(listWidget->removeButton, m_listWidgets.size(), 1);
+				}
+				m_listWidgets.push_back(listWidget);
+			}
+		}
 
 		void ListSettingsWidget::onValueChanged()
 		{

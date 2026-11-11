@@ -3,3 +3,4 @@
 #include "test_simple.h"
 #include "test_nasted.h"
 #include "test_types.h"
+#include "test_defaults.h"

@@ -73,6 +73,17 @@ namespace AppSettings
 		return nullptr;
 	}
 
+	void SettingsGroup::resetToDefault(bool recursive)
+	{
+		for (ISetting* setting : m_settings)
+			setting->resetToDefault();
+		if (recursive)
+		{
+			for (SettingsGroup* group : m_groups)
+				group->resetToDefault(true);
+		}
+	}
+
 	QString SettingsGroup::toString() const
 	{
 		return toString_internal(0)+"\n";

@@ -14,6 +14,7 @@ namespace AppSettings
 	ListSetting::ListSetting(const ListSetting& other)
 		: m_name(other.m_name)
 		, m_list(other.m_list)
+		, m_defaultList(other.m_defaultList)
 	{
 
 	}
@@ -25,6 +26,7 @@ namespace AppSettings
 	ListSetting::ListSetting(const QString& name, const std::vector<QVariant>& list)
 		: m_name(name)
 		, m_list(list)
+		, m_defaultList(list)
 	{
 
 	}
@@ -46,8 +48,18 @@ namespace AppSettings
 	{
 		m_name = other.m_name;
 		m_list = other.m_list;
+		m_defaultList = other.m_defaultList;
 		emit valueChanged();
 		return *this;
+	}
+
+	void ListSetting::resetToDefault()
+	{
+		setData(m_defaultList);
+	}
+	bool ListSetting::isDefault() const
+	{
+		return m_list == m_defaultList;
 	}
 
 	QString ListSetting::toString() const

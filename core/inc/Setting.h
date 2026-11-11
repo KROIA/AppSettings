@@ -91,6 +91,24 @@ namespace AppSettings
             const QVariant &getValue() const;
 
             /// <summary>
+            /// Gets the default value, which is the value the setting was constructed with
+            /// </summary>
+            /// <returns>The default value of the setting</returns>
+            const QVariant &getDefaultValue() const;
+
+            /// <summary>
+            /// Sets the value back to the default value.
+            /// Emits valueChanged() if the value changes.
+            /// </summary>
+            void resetToDefault() override;
+
+            /// <summary>
+            /// Checks if the current value equals the default value
+            /// </summary>
+            /// <returns>True, if the value equals the default value</returns>
+            bool isDefault() const override;
+
+            /// <summary>
             /// Gets the name of the setting
             /// </summary>
             /// <returns>The name of the setting</returns>
@@ -144,6 +162,7 @@ namespace AppSettings
 
 
             std::pair<QString,QVariant> m_parameter;
+            QVariant m_default;
     };
 
 }

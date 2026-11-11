@@ -72,6 +72,16 @@
        <number>5</number>
       </property>
       <item>
+       <widget class="QPushButton" name="resetGroup_pushButton">
+        <property name="toolTip">
+         <string>Reset all settings of this group to their default values</string>
+        </property>
+        <property name="text">
+         <string>Reset group</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <spacer name="horizontalSpacer">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>

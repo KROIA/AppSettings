@@ -15,6 +15,18 @@ namespace AppSettings
 		virtual QString getName() const = 0;
 		virtual QString toString() const = 0;
 
+        /// <summary>
+        /// Sets the value back to the default, which is the value the setting was constructed with.
+        /// Emits valueChanged().
+        /// </summary>
+        virtual void resetToDefault() = 0;
+
+        /// <summary>
+        /// Checks if the current value equals the default value
+        /// </summary>
+        /// <returns>True, if the value equals the default value</returns>
+        virtual bool isDefault() const = 0;
+
 
 
 
