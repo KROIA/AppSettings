@@ -7,6 +7,7 @@ TEST_INSTANTIATE(Test_nasted);
 TEST_INSTANTIATE(Test_types);
 TEST_INSTANTIATE(Test_defaults);
 TEST_INSTANTIATE(Test_validation);
+TEST_INSTANTIATE(Test_encoding);
 
 int main(int argc, char** argv)
 {

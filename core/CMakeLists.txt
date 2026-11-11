@@ -181,6 +181,14 @@ endforeach()
 ## USER_SECTION_START 3
 ## Place per-target modifications here using ${LIBRARY_NAME}_<profile> target names,
 ## e.g.:  target_compile_options(${LIBRARY_NAME}_shared PRIVATE ...)
+
+# Sources contain UTF-8 literals (German UI texts). Without /utf-8, MSVC with
+# Qt 5 reads them in the ANSI code page. Qt 6 already adds it via Qt6::Platform.
+if(MSVC)
+    foreach(profile IN LISTS PROFILES)
+        target_compile_options(${LIBRARY_NAME}_${profile} PRIVATE /utf-8)
+    endforeach()
+endif()
 ## USER_SECTION_END
 
 ## USER_SECTION_START 4

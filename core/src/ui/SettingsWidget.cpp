@@ -39,7 +39,7 @@ namespace AppSettings
 			{
 				m_nameLabel->setText(m_setting->getName());
 				m_inputWidget->setValue(m_setting->getValue());
-				m_resetButton->setToolTip(tr("Auf Standardwert zur\xc3\xbc" "cksetzen: %1").arg(m_setting->getDefaultValue().toString()));
+				m_resetButton->setToolTip(tr("Auf Standardwert zurücksetzen: %1").arg(m_setting->getDefaultValue().toString()));
 			}
 			else
 			{

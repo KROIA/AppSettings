@@ -9,7 +9,7 @@
 
 namespace AppSettings
 {
-	class ISettingsWidget: public QWidget
+	class APP_SETTINGS_API ISettingsWidget: public QWidget
 	{
 		Q_OBJECT
 	public:
@@ -49,13 +49,6 @@ namespace AppSettings
 		/// Creates a small button which calls resetToDefault() when clicked
 		/// </summary>
 		/// <returns>The new button, owned by this widget</returns>
-		QToolButton* createResetButton()
-		{
-			QToolButton* button = new QToolButton(this);
-			button->setIcon(style()->standardIcon(QStyle::SP_BrowserReload));
-			button->setToolTip(tr("Auf Standardwert zur\xc3\xbc" "cksetzen"));
-			connect(button, &QToolButton::clicked, this, &ISettingsWidget::resetToDefault);
-			return button;
-		}
+		QToolButton* createResetButton();
 	};
 }

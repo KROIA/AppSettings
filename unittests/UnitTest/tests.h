@@ -5,3 +5,4 @@
 #include "test_types.h"
 #include "test_defaults.h"
 #include "test_validation.h"
+#include "test_encoding.h"
