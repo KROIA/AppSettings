@@ -14,6 +14,7 @@ namespace AppSettings
         /// <summary>
         /// This widget is used to edit a QVariant
         /// It automaticly changes the input field, depending on the type of the QVariant
+        /// A QKeySequence is edited with a QKeySequenceEdit and a clear button.
         /// </summary>
         class APP_SETTINGS_API DynamicInputWidget : public QWidget {
             Q_OBJECT

@@ -4,6 +4,7 @@
 
 TEST_INSTANTIATE(Test_simple);
 TEST_INSTANTIATE(Test_nasted);
+TEST_INSTANTIATE(Test_types);
 
 int main(int argc, char** argv)
 {

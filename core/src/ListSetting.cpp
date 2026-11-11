@@ -89,9 +89,11 @@ namespace AppSettings
 		std::vector<QVariant> oldList = m_list;
 		m_list.clear();
 		m_list.reserve(list.size());
-		for (const QJsonValue& val : list)
+		for (int i = 0; i < list.size(); ++i)
 		{
-			m_list.push_back(jsonValueToVariant(val));
+			// Use the old element at the same index as type hint
+			QVariant typeHint = static_cast<size_t>(i) < oldList.size() ? oldList[i] : QVariant();
+			m_list.push_back(jsonValueToVariant(list[i], typeHint));
 		}
 		if (m_list != oldList)
 		{

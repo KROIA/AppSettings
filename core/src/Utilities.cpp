@@ -1,6 +1,7 @@
 #include "Utilities.h"
 #include <QJsonArray>
 #include <QJsonObject>
+#include <QKeySequence>
 
 #include "CustomVariants/Selection.h"
 #include "AppSettings_info.h"
@@ -50,6 +51,8 @@ namespace AppSettings
 			return QJsonValue(QString::fromUtf8(var.toByteArray()));
 		case QMetaType::ULongLong:
 			return QJsonValue(static_cast<double>(var.toULongLong())); // No native support for unsigned long long
+		case QMetaType::QKeySequence:
+			return QJsonValue(var.value<QKeySequence>().toString(QKeySequence::PortableText));
 		default:
 		{
 			// Custom types
@@ -104,6 +107,34 @@ namespace AppSettings
 		}
 		}
 		return QVariant(); // Unsupported types will return null
+	}
+
+	QVariant jsonValueToVariant(const QJsonValue& value, const QVariant& typeHint)
+	{
+		QVariant plain = jsonValueToVariant(value);
+		if (!typeHint.isValid() || !plain.isValid() || plain.userType() == typeHint.userType())
+			return plain;
+
+		if (typeHint.userType() == QMetaType::QKeySequence && value.isString())
+			return QVariant::fromValue(QKeySequence::fromString(value.toString(), QKeySequence::PortableText));
+
+		QVariant converted = plain;
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+		bool ok = converted.convert(typeHint.userType());
+#else
+		bool ok = converted.convert(typeHint.metaType());
+#endif
+		// A JSON number is always a double. Only accept the conversion if it is lossless,
+		// so 2.5 never silently becomes 2 (or 3) and out of range values are not clamped.
+		if (ok && value.isDouble())
+			ok = converted.toDouble() == value.toDouble();
+		if (!ok)
+		{
+			Logger::logWarning(std::string("Unable to convert loaded value to type ") + typeHint.typeName()
+				+ ". Keeping the value as " + (plain.typeName() ? plain.typeName() : "unknown"));
+			return plain;
+		}
+		return converted;
 	}
 
 }

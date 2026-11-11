@@ -200,12 +200,25 @@ namespace AppSettings
 			return false;
 		}
 		QJsonArray mapObject = value.toArray();
+		std::vector<std::pair<QVariant, QVariant>> oldMap = m_map;
 		m_map.clear();
 		for (int i = 0; i < mapObject.size(); ++i)
 		{
 			QJsonObject obj = mapObject[i].toObject();
 			QVariant key = jsonValueToVariant(obj["Key"]);
-			QVariant val = jsonValueToVariant(obj["Val"]);
+
+			// Use the old key and value of the same key as type hints
+			QVariant valHint;
+			for (const auto& oldPair : oldMap)
+			{
+				if (oldPair.first == key)
+				{
+					key = jsonValueToVariant(obj["Key"], oldPair.first);
+					valHint = oldPair.second;
+					break;
+				}
+			}
+			QVariant val = jsonValueToVariant(obj["Val"], valHint);
 
 			size_t currentIdx = getIndex(key);
 			if (currentIdx != std::string::npos)

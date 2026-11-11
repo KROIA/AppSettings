@@ -103,7 +103,7 @@ bool Setting::load(const QJsonObject& reader)
 	}
 	else
 	{
-        setValue(jsonValueToVariant(reader[m_parameter.first]));
+        setValue(jsonValueToVariant(reader[m_parameter.first], m_parameter.second));
 		return true;
 	}
 }

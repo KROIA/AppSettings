@@ -9,7 +9,10 @@
 #include <QTimeEdit>
 #include <QCheckBox>
 #include <QLabel>
-#include <QCombobox>
+#include <QComboBox>
+#include <QKeySequenceEdit>
+#include <QToolButton>
+#include <QHBoxLayout>
 #include <limits>
 
 namespace AppSettings
@@ -110,6 +113,28 @@ namespace AppSettings
 				    m_layout->addWidget(checkBox);
 				    break;
 				}
+				case QMetaType::QKeySequence:
+				{
+					// Container with the edit and a clear button, so "no shortcut" can be set.
+					// getValue() finds the QKeySequenceEdit inside the container.
+					QWidget* container = new QWidget(this);
+					QHBoxLayout* hLayout = new QHBoxLayout(container);
+					hLayout->setContentsMargins(0, 0, 0, 0);
+					QKeySequenceEdit* keyEdit = new QKeySequenceEdit(value.value<QKeySequence>(), container);
+					QToolButton* clearButton = new QToolButton(container);
+					clearButton->setText("X");
+					clearButton->setToolTip("Clear shortcut");
+					hLayout->addWidget(keyEdit);
+					hLayout->addWidget(clearButton);
+					connect(keyEdit, &QKeySequenceEdit::keySequenceChanged, this, [this] {emit valueChanged(); });
+					connect(clearButton, &QToolButton::clicked, this, [this, keyEdit]
+						{
+							keyEdit->clear();
+							emit valueChanged();
+						});
+					m_layout->addWidget(container);
+					break;
+				}
 				default:
                 {
                     if (value.canConvert<Selection>())
@@ -139,9 +164,9 @@ namespace AppSettings
             {
                 value = spinBox->value();
             }
-            if (QDoubleSpinBox* spinBox = qobject_cast<QDoubleSpinBox*>(inputWidget))
+            else if (QDoubleSpinBox* doubleSpinBox = qobject_cast<QDoubleSpinBox*>(inputWidget))
             {
-                value = spinBox->value();
+                value = doubleSpinBox->value();
             }
             else if (QLineEdit* lineEdit = qobject_cast<QLineEdit*>(inputWidget))
             {
@@ -169,6 +194,10 @@ namespace AppSettings
                 Selection selection = value.value<Selection>();
                 selection.select(comboBox->currentIndex());
                 value = QVariant::fromValue(selection);
+            }
+            else if (QKeySequenceEdit* keyEdit = inputWidget->findChild<QKeySequenceEdit*>())
+            {
+                value = QVariant::fromValue(keyEdit->keySequence());
             }
             return value;
         }

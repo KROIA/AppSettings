@@ -131,6 +131,8 @@ namespace AppSettings
 
             /// <summary>
             /// Reads the setting from a QJsonObject
+            /// The loaded value is converted to the type of the current value (e.g. an int stays an int,
+            /// a QKeySequence is parsed from its string). If that fails, the unconverted value is used.
             /// </summary>
             /// <param name="reader">The QJsonObject to read the setting from</param>
             /// <returns>True, if the setting could be read</returns>
