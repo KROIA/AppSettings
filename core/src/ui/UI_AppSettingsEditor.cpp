@@ -254,7 +254,7 @@ namespace AppSettings
 			}
 			if (!message.isEmpty())
 			{
-				QMessageBox::warning(this, QString::fromUtf8("Ung\xc3\xbcltige Einstellungen"), message);
+				QMessageBox::warning(this, tr("Ung\xc3\xbcltige Einstellungen"), message);
 				return;
 			}
 

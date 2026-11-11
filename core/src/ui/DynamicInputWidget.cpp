@@ -123,7 +123,7 @@ namespace AppSettings
 					QKeySequenceEdit* keyEdit = new QKeySequenceEdit(value.value<QKeySequence>(), container);
 					QToolButton* clearButton = new QToolButton(container);
 					clearButton->setText("X");
-					clearButton->setToolTip(QString::fromUtf8("Tastenk\xc3\xbcrzel l\xc3\xb6schen"));
+					clearButton->setToolTip(tr("Tastenk\xc3\xbcrzel l\xc3\xb6schen"));
 					hLayout->addWidget(keyEdit);
 					hLayout->addWidget(clearButton);
 					connect(keyEdit, &QKeySequenceEdit::keySequenceChanged, this, [this] {emit valueChanged(); });
