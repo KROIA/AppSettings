@@ -85,7 +85,7 @@ namespace AppSettings
                 case QMetaType::QTime:
                 {
                     QTimeEdit* timeEdit = new QTimeEdit(this);
-                    connect(timeEdit, &QTimeEdit::dateChanged, this, [&] {emit valueChanged(); });
+                    connect(timeEdit, &QTimeEdit::timeChanged, this, [&] {emit valueChanged(); });
                     timeEdit->setTime(value.toTime());
                     m_layout->addWidget(timeEdit);
                     break;
@@ -93,7 +93,7 @@ namespace AppSettings
                 case QMetaType::QDateTime:
                 {
                     QDateTimeEdit* dateTimeEdit = new QDateTimeEdit(this);
-                    connect(dateTimeEdit, &QTimeEdit::timeChanged, this, [&] {emit valueChanged(); });
+                    connect(dateTimeEdit, &QDateTimeEdit::dateTimeChanged, this, [&] {emit valueChanged(); });
                     dateTimeEdit->setDateTime(value.toDateTime());
                     m_layout->addWidget(dateTimeEdit);
                     break;
@@ -143,6 +143,7 @@ namespace AppSettings
                         QComboBox* comboBox = new QComboBox(this);
                         comboBox->addItems(selection.getSelection());
                         comboBox->setCurrentIndex(selection.getSelectedIndex());
+                        connect(comboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this] {emit valueChanged(); });
                         m_layout->addWidget(comboBox);
                     }
                     else

@@ -15,5 +15,5 @@ int main(int argc, char** argv)
     UnitTest::Test::runAllTests(results);
     UnitTest::Test::printResults(results);
 
-    return results.getSuccess();
+    return results.getSuccess() ? 0 : 1;
 }

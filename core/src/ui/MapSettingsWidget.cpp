@@ -41,6 +41,7 @@ namespace AppSettings
 			headerLayout->addWidget(createResetButton());
 			vLayout->addLayout(headerLayout);
 			vLayout->addWidget(m_contentWidget);
+			m_contentGridLayout = new QGridLayout(m_contentWidget);
 			
 			
 		}
@@ -59,11 +60,6 @@ namespace AppSettings
 				delete m_mapWidgets[i];
 			}
 			m_mapWidgets.clear();
-			//QLayout *oldLayout =  m_contentWidget->layout();
-			QGridLayout* gridLayout = new QGridLayout(m_contentWidget);
-			m_contentGridLayout = gridLayout;
-			m_contentWidget->setLayout(gridLayout);
-			//oldLayout->deleteLater();
 			
 
 			if (m_setting)
@@ -86,9 +82,14 @@ namespace AppSettings
 							"}");
 						int buttonSize = 20;
 						m_addButton->setIconSize(QSize(buttonSize, buttonSize));
+						connect(m_addButton, &QPushButton::clicked, this, &MapSettingsWidget::onAddButtonClicked);
 					}
-					connect(m_addButton, &QPushButton::clicked, this, &MapSettingsWidget::onAddButtonClicked);
+					m_addButton->show();
 					replaceAddButton();
+				}
+				else if (m_addButton)
+				{
+					m_addButton->hide();
 				}
 			}
 			else
