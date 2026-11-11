@@ -4,6 +4,7 @@
 #include <iostream>
 #include <AppSettings.h>
 #include <Logger.h>
+#include <QKeySequence>
 
 
 class Group0 : public AppSettings::SettingsGroup
@@ -50,6 +51,29 @@ public:
 	AppSettings::Setting m_testSetting3 = AppSettings::Setting("TestValue3", 3);
 };
 
+class Shortcuts : public AppSettings::SettingsGroup
+{
+public:
+	Shortcuts()
+		: SettingsGroup("Shortcuts")
+	{
+		addSetting(m_rotate);
+		addSetting(m_comment);
+
+		// The editor refuses to save while two shortcuts are equal
+		setValidator([this](const AppSettings::SettingsGroup&) -> QString
+			{
+				QKeySequence rotate = m_rotate.getValue().value<QKeySequence>();
+				if (!rotate.isEmpty() && rotate == m_comment.getValue().value<QKeySequence>())
+					return "Rotate and Comment use the same shortcut: " + rotate.toString();
+				return QString();
+			});
+	}
+
+	AppSettings::Setting m_rotate = AppSettings::Setting("Rotate", QKeySequence("Ctrl+R"));
+	AppSettings::Setting m_comment = AppSettings::Setting("Comment", QKeySequence("Ctrl+K, Ctrl+C"));
+};
+
 class Group2 : public AppSettings::SettingsGroup
 {
 public:
@@ -63,6 +87,7 @@ public:
 		addSetting(m_testSetting4);
 		addGroup(m_group0);
 		addGroup(m_group1);
+		addGroup(m_shortcuts);
 	}
 
 	AppSettings::Setting m_testSetting0 = AppSettings::Setting("Name1", "Peter");
@@ -72,6 +97,7 @@ public:
 	AppSettings::Setting m_testSetting4 = AppSettings::Setting("Text", "Das ist ein Text mit mehreren\nZeilen");
 	Group0 m_group0;
 	Group1 m_group1;
+	Shortcuts m_shortcuts;
 };
 
 class ThisAppSettings : public AppSettings::ApplicationSettings
